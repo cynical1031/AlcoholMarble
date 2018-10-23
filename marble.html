@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title></title>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<style>
+		html, body, div, span, applet, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		a, abbr, acronym, address, big, cite, code,
+		del, dfn, em, img, ins, kbd, q, s, samp,
+		small, strike, strong, sub, sup, tt, var,
+		b, u, i, center,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, embed, 
+		figure, figcaption, footer, header, hgroup, 
+		menu, nav, output, ruby, section, summary,
+		time, mark, audio, video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		/* HTML5 display-role reset for older browsers */
+		article, aside, details, figcaption, figure, 
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		blockquote, q {
+			quotes: none;
+		}
+		blockquote:before, blockquote:after,
+		q:before, q:after {
+			content: '';
+			content: none;
+		}
+		table
+		{
+			border-collapse: collapse;
+			border-spacing: 0;
+			width:100%;
+			height:auto;
+		}
+		tr
+		{
+			width:100%;
+			height:12.5%;
+			padding:0;
+			margin:0;
+		}
+		.tile {
+			text-align: center;
+			width: 2.5%;
+		}
+		.tile>img{
+			width:100%;
+			vertical-align: top;
+		}
+		#diceWrap {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -130px;
+		}
+
+		div.dice {
+			float: left;
+			width: 32px;
+			background: #F5F5F5;
+			border: #999 1px solid;
+			padding: 10px;
+			font-size: 24px;
+			text-align: center;
+			margin: 5px;
+		}
+
+		.marker{
+			position:absolute;
+			z-index:2;
+			width:3%;
+		}
+	</style>
+	<script>
+		var member = 1;
+		var memberTurn = 0;
+		var player = [];
+		var memberArr = []
+		var doubleFlag = true;
+		
+
+		function init() {
+			//alert(player.length);
+			for (var i = 0; i < member; i++) 
+			{
+				player.push("" + i);
+			}
+			for (var i = 0; i < player.length; i++) 
+			{
+				memberArr.push("<span class=player" + i + "><img class='marker' src='./images/player1.png' /></span>")
+			}
+			$('#0').append(memberArr);
+		}
+
+		function rollDice() {
+			var die1 = $("#die1");
+			var die2 = $("#die2");
+			var status = $("#status");
+			var d1 = Math.floor(Math.random() * 6) + 1;
+			var d2 = Math.floor(Math.random() * 6) + 1;
+			var diceTotal = d1 + d2;
+			die1.text(d1);
+			die2.text(d2);
+			status.text("나온 숫자 " + diceTotal + ".");
+			if (d1 == d2) {
+				status.append("더블 한번 더 ");
+				doubleFlag = false;
+
+			}
+
+			moveMarker(diceTotal);
+
+			if (doubleFlag) 
+			{
+				memberTurn++;
+				if (memberTurn < member) 
+				{
+
+					status.append(" 다음 턴 : " + player[memberTurn]);
+				}
+				else if (memberTurn == member)
+				{
+					status.append(" 다음 턴 : " + player[0]);
+					memberTurn = 0;
+				}
+
+			} 
+			else 
+			{
+				doubleFlag = true;
+			}
+
+		}
+
+		function moveMarker(diceTotal) {
+
+			var currentLoaction = Number($('.player' + memberTurn + '').parent().attr('id'))
+			var location = currentLoaction + diceTotal;
+			console.log('memberTurn : ' + memberTurn);
+			console.log('diceTotal : ' + diceTotal);
+			console.log('last : ' + currentLoaction);
+			console.log('location : ' + location);
+			console.log(location)
+			for (var i = 0; i < location; i++) 
+			{
+				$('.tile').find($('.player' + memberTurn + '')).fadeOut(100, function() {
+					$(this).remove();
+				});
+				$('#' + (i + 1) + '').fadeIn(1000, function() {
+					$(this).append(memberArr[memberTurn]);
+				});
+				if (location >= 22) 
+				{
+					location = location - 22;
+					$('.tile').find($('.player' + memberTurn + '')).fadeOut(100, function() {
+						$(this).remove();
+					});
+
+					if (location == 0) 
+					{
+						$('.tile').find($('.player' + memberTurn + '')).fadeOut(100, function() {
+							$(this).remove();
+						});
+						$('#0').fadeIn(1000, function() {
+							$(this).append(memberArr[memberTurn]);
+						});
+						
+					}
+					else if (location > 0) 
+					{
+						for (var j = 0; j <= location; j++) {
+							$('.tile').find($('.player' + memberTurn + '')).fadeOut(100, function() {
+								$(this).remove();
+							});
+							$('#' + j + '').fadeIn(1000, function() {
+								$(this).append(memberArr[memberTurn]);
+							});
+						}
+					}
+				}				
+			}
+			
+			if(location == 7 || location == 19)
+			{
+				goldKey();
+			}
+
+		}
+		
+		function goldKey(){
+			var goldKeyOption = [
+				"a",
+				"b",
+				"c",
+				"d",
+				"e",
+				"f",
+				"g"
+			]
+			var randomCount = Math.floor(Math.random() * goldKeyOption.length);
+			alert(goldKeyOption[randomCount]);
+		}
+	</script>
+</head>
+
+<body onload="init();">
+	<div id="settingWrap">
+		
+	</div>
+	<div>
+		<table cellspacing="0">
+			<tr>
+				<td id="4" class="tile"><img src="./images/7.jpg" alt=""></td>
+				<td id="5" class="tile">8</td>
+				<td id="6" class="tile">9</td>
+				<td id="7" class="tile">10</td>
+				<td id="8" class="tile">11</td>
+				<td id="9" class="tile">12</td>
+				<td id="10" class="tile">13</td>
+				<td id="11" class="tile">14</td>
+			</tr>
+			<tr>
+				<td id="4" class="tile"><img src="./images/6.jpg" alt=""></td>
+				<td id="5" class="tile">5</td>
+				<td id="6" class="tile">6</td>
+				<td id="7" class="tile">7</td>
+				<td id="8" class="tile">8</td>
+				<td id="9" class="tile">9</td>
+				<td id="10" class="tile">10</td>
+				<td id="11" class="tile">11</td>
+			</tr>
+			<tr>
+				<td id="4" class="tile"><img src="./images/5.jpg" alt=""></td>
+				<td id="5" class="tile">5</td>
+				<td id="6" class="tile">6</td>
+				<td id="7" class="tile">7</td>
+				<td id="8" class="tile">8</td>
+				<td id="9" class="tile">9</td>
+				<td id="10" class="tile">10</td>
+				<td id="11" class="tile">11</td>
+			</tr>
+			<tr>
+				<td id="4" class="tile"><img src="./images/4.jpg" alt=""></td>
+				<td id="5" class="tile">5</td>
+				<td id="6" class="tile">6</td>
+				<td id="7" class="tile">7</td>
+				<td id="8" class="tile">8</td>
+				<td id="9" class="tile">9</td>
+				<td id="10" class="tile">10</td>
+				<td id="11" class="tile">11</td>
+			</tr>
+			<tr>
+				<td id="3" class="tile"><img src="./images/3.jpg" alt=""></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td id="12" class="tile">12</td>
+			</tr>
+			<tr>
+				<td id="2" class="tile"><img src="./images/2.jpg" alt=""></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td id="13" class="tile">13</td>
+			</tr>
+			<tr>
+				<td id="1" class="tile"><img src="./images/1.jpg" alt=""></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td id="14" class="tile">14</td>
+			</tr>
+			<tr>
+				<td id="0" class="tile"><img src="./images/0.jpg" alt=""></td>
+				<td id="21" class="tile">21</td>
+				<td id="20" class="tile">20</td>
+				<td id="19" class="tile">19</td>
+				<td id="18" class="tile">18</td>
+				<td id="17" class="tile">17</td>
+				<td id="16" class="tile">16</td>
+				<td id="15" class="tile">15</td>
+			</tr>
+		</table>
+	</div>
+	<div id="diceWrap">
+		<div id="die1" class="dice">0</div>
+		<div id="die2" class="dice">0</div>
+		<button onclick="rollDice()">굴리기</button>
+		<h2 id="status" style="clear:left;"></h2>
+	</div>
+	
+</body>
+
+</html>
