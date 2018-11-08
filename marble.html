@@ -7,8 +7,9 @@
 	<title></title>
 	<link href="https://cdn.rawgit.com/YJSoft/Webfonts/0.1/BM_JUA.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="./css/style.css" type="text/css">
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>  
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script src="js/marble.js"></script>
 </head>
 
@@ -64,7 +65,7 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile journey">물</td>
+				<td class="tile journey">흑기사</td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -92,9 +93,9 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile journey">물</td>
 				<td class="tile journey">술</td>
-				<td class="tile journey">물</td>
+				<td class="tile journey">술</td>
+				<td class="tile journey">술</td>
 				<td class="tile journey">술</td>
 				<td class="tile journey">물</td>
 				<td class="tile"></td>
@@ -124,7 +125,7 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile journey">물</td>
+				<td class="tile journey">술</td>
 				<td class="tile"></td>
 				<td class="tile panel left">황금열쇠</td>
 			</tr>
@@ -145,42 +146,28 @@
 				<td class="tile panel corner">앞으로 3칸</td>
 			</tr>
 		</table>
-		<table>
+		<table id="moveBoard">
 			<tr>
-				<td id="7" class="tile panel corner"></td>
-				<td id="8" class="tile panel top"></td>
+				<td id="8" class="tile panel corner"></td>
 				<td id="9" class="tile panel top"></td>
-				<td id="10" class="tile panel top "></td>
+				<td id="10" class="tile panel top"></td>
 				<td id="11" class="tile panel top "></td>
 				<td id="12" class="tile panel top "></td>
 				<td id="13" class="tile panel top "></td>
 				<td id="14" class="tile panel top "></td>
-				<td id="15" class="tile panel top"></td>
-				<td id="16" class="tile panel top "></td>
+				<td id="15" class="tile panel top "></td>
+				<td id="16" class="tile panel top"></td>
 				<td id="17" class="tile panel top "></td>
-				<td id="18" class="tile panel corner"></td>
+				<td id="18" class="tile panel top "></td>
+				<td id="19" class="tile panel corner"></td>
 			</tr>
 			<tr>
-				<td id="6" class="tile panel left "></td>
+				<td id="7" class="tile panel left "></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td id="19" class="tile panel left"></td>
-			</tr>
-			<tr>
-				<td id="5" class="tile panel left"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
+				<td id="journey10" class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -189,18 +176,46 @@
 				<td id="20" class="tile panel left"></td>
 			</tr>
 			<tr>
-				<td id="4" class="tile panel"></td>
+				<td id="6" class="tile panel left"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td id="journey9" class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
+				<td id="21" class="tile panel left"></td>
+			</tr>
+			<tr>
+				<td id="5" class="tile panel"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td id="journey8" class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td id="21" class="tile panel left "></td>
+				<td id="22" class="tile panel left "></td>
+			</tr>
+			<tr>
+				<td id="4" class="tile panel left"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td class="tile"></td>
+				<td id="journey7" class="tile"></td>
+				<td id="journey6" class="tile"></td>
+				<td id="journey5" class="tile"></td>
+				<td id="journey4" class="tile"></td>
+				<td id="journey3" class="tile"></td>
+				<td class="tile"></td>
+				<td id="23" class="tile panel left"></td>
 			</tr>
 			<tr>
 				<td id="3" class="tile panel left"></td>
@@ -212,9 +227,9 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
+				<td id="journey2" class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile"></td>
-				<td id="22" class="tile panel left"></td>
+				<td id="24" class="tile panel"></td>
 			</tr>
 			<tr>
 				<td id="2" class="tile panel left"></td>
@@ -226,26 +241,13 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
+				<td id="journey1" class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile"></td>
-				<td id="23" class="tile panel"></td>
+				<td id="25" class="tile panel left"></td>
 			</tr>
 			<tr>
-				<td id="1" class="tile panel left"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td class="tile"></td>
-				<td id="24" class="tile panel left"></td>
-			</tr>
-			<tr>
-				<td id="0" class="tile panel corner"></td>
+				<td id="1" class="tile panel corner"></td>
+				<td id="36" class="tile panel top"></td>
 				<td id="35" class="tile panel top"></td>
 				<td id="34" class="tile panel top"></td>
 				<td id="33" class="tile panel top"></td>
@@ -255,8 +257,7 @@
 				<td id="29" class="tile panel top"></td>
 				<td id="28" class="tile panel top"></td>
 				<td id="27" class="tile panel top"></td>
-				<td id="26" class="tile panel top"></td>
-				<td id="25" class="tile panel corner"></td>
+				<td id="26" class="tile panel corner"></td>
 			</tr>
 		</table>
 	</div>
