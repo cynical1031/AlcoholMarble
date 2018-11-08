@@ -65,10 +65,10 @@ function init() {
 		player.push("" + i);
 	}
 	for (var i = 0; i < player.length; i++) {
-		memberArr.push("<p class=player" + i + " style='float:left;' data-journey='0'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'  data-journey='0'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
 	}
 
-	$('#0').prepend(memberArr);
+	$('#1').prepend(memberArr);
 	$("p").draggable();
 	$('#settingWrap').hide();
 }
@@ -98,15 +98,20 @@ function rollDice() {
 		doubleFlag = false;
 
 	}
-	moveMarker(diceTotal);
-
+	var currentLoaction = Number($('#player' + memberTurn + '').parent().attr('id'))
+	var location = currentLoaction + diceTotal
+	animateMovement(memberTurn, currentLoaction, location, diceTotal);
+	$('#player'+memberTurn-1).removeClass('blink')
+	$('#player0').removeClass('blink')
 	if (doubleFlag) {
 		memberTurn++;
 		if (memberTurn < member) {
 
 			status.append(" 다음 턴 : " + player[memberTurn]);
+
 		} else if (memberTurn == member) {
 			status.append(" 다음 턴 : " + player[0]);
+			$('#player0').addClass('blink')
 			memberTurn = 0;
 		}
 	} else {
@@ -115,52 +120,159 @@ function rollDice() {
 
 }
 
-function moveMarker(diceTotal) {
-
-	var journeyFlag = $('.player' + memberTurn + '').attr('data-journey')
-
+function animateMovement(playerId, from, to, diceNumber) {
+	var journeyFlag = $('#player' + memberTurn + '').attr('data-journey')
 	if (journeyFlag == 0) {
-		
-		var currentLoaction = Number($('.player' + memberTurn + '').parent().attr('id'))
-		//alert($('.player' + memberTurn + '').parent().attr('id'))
-
-		var location = currentLoaction + diceTotal;
-		console.log('memberTurn : ' + memberTurn);
-		console.log('diceTotal : ' + diceTotal);
-		console.log('last : ' + currentLoaction);
-		console.log('location : ' + location);
-		console.log(location)
-	
-		if (location >= 36) {
-			location = location - 36;
+		var elem = document.getElementById("player" + playerId);
+		if (to > 36) {
+			to = to - 36
 		}
-		var des = $('#' + location + '').position();
-		var el = ($('.player' + memberTurn + ''))
-		el.css("position", "absolute");
-		el.animate({
-			top: des.top + "px",
-			left: des.left + "px"
-		}, function () {
-			el.remove().appendTo('#' + location + '').css("position", "");
-			el.remove().appendTo('#' + location + '').css("top", "");
-			el.remove().appendTo('#' + location + '').css("left", "");
-			$("p").draggable();
-			if (location == 4 || location == 15 || location == 24 || location == 32) {
-				goldKey();
-			}
-			if (location == 18) {
-				$('#dialogWrap').show(300)
-				$('#dialogContent').text('다음 턴 부터 술 여행 시작');
-				$('.tile').find($('.player' + memberTurn + '')).remove();
-				$('#27').append(memberArr[memberTurn])
-				$('.player' + memberTurn + '').attr('data-journey', 1)
-				$("p").draggable();
-			}
-		});
+		var fromDirection = getDirection(from);
+		var toDirection = getDirection(to);
 
-	} else {
-		journey(diceTotal);
+		
+		elem.className = '';
+
+		if (fromDirection == toDirection) {
+			pixels = diceNumber * 80;
+			elem.classList.add("player" + playerId + "_" + fromDirection);
+			calculateMove(pixels, fromDirection, elem, toDirection, playerId, from, to);
+		} else {
+			elem.classList.add("player" + playerId + "_" + fromDirection);
+			if (from < 9) {
+				pixels = (8 - from) * 85;
+				remainingPixels = (to - 8) * 95;
+			} else if (from < 21) {
+				pixels = (20 - from) * 85;
+				remainingPixels = (to - 20) *  95;
+			} else if (from < 27) {
+				pixels = (26 - from) * 85;
+				remainingPixels = (to - 26) * 95;
+			} else  {
+				pixels = (37 - from) * 85;
+				remainingPixels = (to - 1) * 95;
+			}
+			
+			moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
+		}
 	}
+	else
+	{
+		journey(diceNumber)	
+	}
+	
+}
+
+function getDirection(pos) {
+	if (pos >= 1 && pos < 9) {
+		return "up";
+	} else if (pos >= 9 && pos < 20) {
+		return "left";
+	} else if (pos >= 20 && pos < 27) {
+		return "down";
+	} else {
+		return "right";
+	}
+}
+
+function calculateMove(pixels, direction, elem, toDirection, playerId, from, to) {
+	var pos = 0;
+	elem.classList.add("animation");
+	var id = setInterval(frame, 1);
+	
+	function frame() {
+		if (pos == pixels || pos == -pixels) {
+			clearInterval(id);
+			elem.className = '';
+			elem.style.bottom = '0px';
+			elem.style.left = '0px';
+			elem.style.top = '0px';
+			elem.style.right = '0px';
+			elem.classList.add("player" + playerId + "_" + toDirection);
+			attatch(playerId, from, to);
+		} else {
+
+			if (direction == "right" || direction == "up") {
+				pos--;
+			} else {
+				pos++;
+			}
+
+			switch (direction) {
+				case "up":
+					elem.style.top = pos + 'px';
+					break;
+				case "left":
+					elem.style.left = pos + 'px';
+					break;
+				case "down":
+					elem.style.top = pos + 'px';
+					break;
+				case "right":
+					elem.style.left = pos + 'px';
+					break;
+				default:
+					break;
+
+			}
+		}
+	}
+}
+
+
+function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, remainingPixels) {
+	var pos = 0;
+	elem.classList.add("animation");
+	var id = setInterval(frame, 1);
+
+	function frame() {
+		if (pos == pixels || pos == -pixels) {
+			clearInterval(id);
+			elem.className = '';
+
+			elem.classList.add("player" + playerId + "_" + toDirection);
+			calculateMove(remainingPixels, toDirection, elem, toDirection, playerId, from, to);
+		} else {
+			if (direction == "right" || direction == "up") {
+				pos--;
+			} else {
+				pos++;
+			}
+
+			switch (direction) {
+				case "up":
+					elem.style.top = pos + 'px';
+					break;
+				case "left":
+					elem.style.left = pos + 'px';
+					break;
+				case "down":
+					elem.style.top = pos + 'px';
+					break;
+				case "right":
+					elem.style.left = pos + 'px';
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+
+function attatch(playerId, from, to) {
+	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
+	if (to == 5 || to == 16 || to == 25 || to == 33) {
+		goldKey();
+	}
+	if (to == 19) {
+		$('#dialogWrap').show(300)
+		$('#dialogContent').text('다음 턴 부터 술 여행 시작');
+		$('.tile').find($('#player' + memberTurn + '')).remove();
+		$('#28').append(memberArr[memberTurn])
+		$('#player' + memberTurn + '').attr('data-journey', 1)
+		$("p").draggable();
+	}
+	$('#player'+memberTurn).addClass('blink')
 }
 
 function goldKey() {
@@ -169,34 +281,24 @@ function goldKey() {
 	$('#goldKeyWrap').show(300);
 }
 
-function journey(diceTotal) {
-	var currentLoaction = $('.player' + memberTurn + '').parent().attr('id')
-	if(currentLoaction == 27)
-	{
-		currentLoaction = 0	
+function journey(diceNumber) {
+	var currentLoaction = $('#player' + memberTurn + '').parent().attr('id')
+	if (currentLoaction == 27) {
+		currentLoaction = 0
+	} else {
+		currentLoaction = Number(currentLoaction.substr(7))
 	}
-	else
-	{
-		currentLoaction = Number(currentLoaction.substr(7))	
-	}
-		
-	var location = currentLoaction + diceTotal;
-	console.log('memberTurn : ' + memberTurn);
-		console.log('diceTotal : ' + diceTotal);
-		console.log('last : ' + currentLoaction);
-		console.log('location : ' + location);
-		console.log(location)
+
+	var location = currentLoaction + diceNumber;
 	if (location > 10) {
 		$('#dialogWrap').show(300)
 		$('#dialogContent').text('술 여행 종료');
-		$('.tile').find($('.player' + memberTurn + '')).remove();
-		$('#12').append(memberArr[memberTurn])
-		$('.player' + memberTurn + '').attr('data-journey', 0)
-	}
-	else
-	{
+		$('.tile').find($('#player' + memberTurn + '')).remove();
+		$('#13').append(memberArr[memberTurn])
+		$('#player' + memberTurn + '').attr('data-journey', 0)
+	} else {
 		var des = $('#journey' + location + '').position();
-		var el = ($('.player' + memberTurn + ''))
+		var el = ($('#player' + memberTurn + ''))
 		el.css("position", "absolute");
 		el.animate({
 			top: des.top + "px",
@@ -206,7 +308,7 @@ function journey(diceTotal) {
 			el.remove().appendTo('#journey' + location + '').css("top", "");
 			el.remove().appendTo('#journey' + location + '').css("left", "");
 			$("p").draggable();
-		})	
+		})
 	}
 
 }
@@ -227,3 +329,4 @@ $(document).ready(function () {
 		$('#dialogWrap').hide(300);
 	})
 })
+
