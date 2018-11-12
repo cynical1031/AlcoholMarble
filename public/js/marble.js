@@ -30,7 +30,12 @@ var defaultRule = [
 			"딸기 게임",
 			"할머니 게임",
 			"아파트 게임",
-			"다같이 물 한잔"
+			"다같이 물 한잔",
+			"파도 타기",
+			"세 잔 적립",
+			"뚜껑 꺾기",
+			"Happy New Year!",
+			"업 다운"
 		];
 var goldKeyOption = [
 			"한잔 쉬기",
@@ -38,8 +43,7 @@ var goldKeyOption = [
 			"내 잔 지목권",
 			"음료수 1잔",
 			"주류 제조권",
-			"f",
-			"g"
+			"물 한잔"
 		];
 var player = [];
 var memberArr = []
@@ -52,12 +56,12 @@ function init() {
 		gameRule = $('#gameRule').val().split('/');
 	}
 
-	if (gameRule.length < 26) {
-		defaultRule = defaultRule.slice(0, (26 - gameRule.length));
+	if (gameRule.length < 31) {
+		defaultRule = defaultRule.slice(0, (31 - gameRule.length));
 		gameRule = shuffle(defaultRule.concat(gameRule));
 	}
 	
-	socket.emit('init',{gameRule:gameRule});
+	socket.emit('init',{gameRule:gameRule, goldKeyOption:goldKeyOption.length});
 }
 
 function shuffle(arr) {
@@ -89,7 +93,6 @@ function rollDice() {
 		beforeTurn = nextTurn;
 		var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
 		var location = currentLoaction + diceTotal;
-		
 		if (doubleFlag) {
 			nextTurn++;
 			if (nextTurn < member) {
@@ -239,23 +242,13 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 
 function attatch(playerId, from, to) {
 	document.getElementById(to).appendChild(document.getElementById('player' + playerId));	
-	if (to == 5 || to == 16 || to == 25 || to == 33) {
-		goldKey();
-	}
 }
 
-function goldKey() {
-	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
-	$('#goldKeyContent').text(goldKeyOption[randomCount]);
-	$('#goldKeyWrap').show(300);
-	$('.statusLi').eq(beforeTurn).append('<span onclick="removeGoldKey($(this));" style="padding-left:10px;">' + goldKeyOption[randomCount] + '</span>');
-
-}
-
-function removeGoldKey(el) {
-	$('#dialogWrap').show();
-	$('#dialogContent').html(el.parent('li').text().substr(0, 7) + '님이<br />' + el.text() + '을(를) 사용합니다');
-	el.remove();
+function removeGoldKey(playerId, text,idx) {
+	console.log(playerId)
+	console.log(text)
+	console.log(idx)
+	socket.emit('showMyGoldKey',{playerId:playerId, text:text, eq:idx})		
 }
 
 function drag() {

@@ -9,11 +9,14 @@
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src = "js/jquery.ui.touch-punch.min.js" > </script> 
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="js/connect.js"></script>
 	<script src="js/marble.js"></script>	
 	<script>
 		$(document).ready(function() {
+			$('#settingWrap').hide();
+			
 			$('.card').click(function() {
 				$(this).toggleClass('flipped');
 			});
@@ -286,10 +289,10 @@
 		
 	</div>
 	<div id="goldKeyStatus">
-		<h4>황금열쇠 현황</h4>
-		<ul id="statusList">
+		<h4>내 황금열쇠</h4>
+		<div id="statusList">
 
-		</ul>
+		</div>
 	</div>
 	<div id="diceWrap">
 		<ul>
