@@ -215,8 +215,8 @@ td {
 
 #diceWrap {
 	position: absolute;
-	bottom: 25%;
-	left: 25%;
+	top: 500px;
+	left:230px;
 	z-index: 3;
 	display: none;
 }

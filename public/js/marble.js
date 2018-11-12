@@ -31,7 +31,7 @@ var defaultRule = [
 			"할머니 게임",
 			"아파트 게임",
 			"다같이 물 한잔"
-		]
+		];
 var goldKeyOption = [
 			"한잔 쉬기",
 			"흑기사 지명권(거부X)",
@@ -46,38 +46,18 @@ var memberArr = []
 var doubleFlag = true;
 
 function init() {
-	member = Number($('#playerCount').val());
 	if ($('#gameRule').val() == "") {
-		gameRule = []
+		gameRule = [];
 	} else {
 		gameRule = $('#gameRule').val().split('/');
 	}
 
 	if (gameRule.length < 26) {
-		defaultRule = defaultRule.slice(0, (26 - gameRule.length))
-		gameRule = shuffle(defaultRule.concat(gameRule))
+		defaultRule = defaultRule.slice(0, (26 - gameRule.length));
+		gameRule = shuffle(defaultRule.concat(gameRule));
 	}
-
-	for (var i = 0; i < gameRule.length; i++) {
-		$('.game').eq(i).text(gameRule[i])
-	}
-	for (var i = 0; i < member; i++) {
-		player.push("" + i);
-	}
-	for (var i = 0; i < player.length; i++) {
-		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'  data-journey='0'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
-		$('#statusList').append("<li class='statusLi'>player" + i + "</li>")
-	}
-
-	$('#1').prepend(memberArr);
-	$("p").draggable();
-	$('#settingWrap').hide();
-	$('#diceWrap').show();
-	$('#goldKeyStatus').show();
-	$('#goldKeyWrap').width(window.innerWidth);
-	$('#goldKeyWrap').height(window.innerHeight);
-	$('#dialogWrap').width(window.innerWidth);
-	$('#dialogWrap').height(window.innerHeight);
+	
+	socket.emit('init',{gameRule:gameRule});
 }
 
 function shuffle(arr) {
@@ -105,71 +85,60 @@ function rollDice() {
 			status.append("더블 한번 더 ");
 			doubleFlag = false;
 		}
-		$('p').removeClass('blink')
 
 		beforeTurn = nextTurn;
-		var currentLoaction = Number($('#player' + nextTurn + '').parent().attr('id'))
-		var location = currentLoaction + diceTotal
+		var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
+		var location = currentLoaction + diceTotal;
 		
-		animateMovement(nextTurn, currentLoaction, location, diceTotal);
 		if (doubleFlag) {
 			nextTurn++;
 			if (nextTurn < member) {
 				status.append(" 다음 턴 : Player" + player[nextTurn]);
-				$('#player'+nextTurn).addClass('blink')
 			} else if (nextTurn == member) {
 				status.append(" 다음 턴 : Player" + player[0]);
-				$('#player0').addClass('blink')
 				nextTurn = 0;
 			}
 		} else {
-			$('#player'+beforeTurn).addClass('blink')
 			doubleFlag = true;
 		}
-		
+		socket.emit('move',{playerId:beforeTurn, from:currentLoaction, to:location, diceNumber:diceTotal, nextTurn:nextTurn});
 
 }
 
 function animateMovement(playerId, from, to, diceNumber) {
-	var journeyFlag = $('#player' + nextTurn + '').attr('data-journey')
-	if (journeyFlag == 0) {
-		var elem = document.getElementById("player" + playerId);
-		if (to > 36) {
-			to = to - 36
-		}
-		var fromDirection = getDirection(from);
-		var toDirection = getDirection(to);
-
-
-		elem.className = '';
-
-		if (fromDirection == toDirection) {
-			pixels = diceNumber * 80;
-			elem.classList.add("player" + playerId + "_" + fromDirection);
-			calculateMove(pixels, fromDirection, elem, toDirection, playerId, from, to);
-		} else {
-			elem.classList.add("player" + playerId + "_" + fromDirection);
-			if (from < 9) {
-				pixels = (8 - from) * 85;
-				remainingPixels = (to - 8) * 95;
-			} else if (from < 21) {
-				pixels = (20 - from) * 85;
-				remainingPixels = (to - 20) * 95;
-			} else if (from < 27) {
-				pixels = (26 - from) * 85;
-				remainingPixels = (to - 26) * 95;
-			} else {
-				pixels = (37 - from) * 85;
-				remainingPixels = (to - 1) * 95;
-			}
-
-			moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
-		}
-	} else {
-		journey(diceNumber)
-		
+	var elem = document.getElementById("player" + playerId);
+	if (to > 36) {
+		to = to - 36
 	}
+	var fromDirection = getDirection(from);
+	var toDirection = getDirection(to);
 
+
+	elem.className = '';
+
+	if (fromDirection == toDirection) {
+		pixels = diceNumber * 80;
+		elem.classList.add("player" + playerId + "_" + fromDirection);
+		calculateMove(pixels, fromDirection, elem, toDirection, playerId, from, to);
+	} else {
+		elem.classList.add("player" + playerId + "_" + fromDirection);
+		if (from < 9) {
+			pixels = (8 - from) * 85;
+			remainingPixels = (to - 8) * 95;
+		} else if (from < 21) {
+			pixels = (20 - from) * 85;
+			remainingPixels = (to - 20) * 95;
+		} else if (from < 27) {
+			pixels = (26 - from) * 85;
+			remainingPixels = (to - 26) * 95;
+		} else {
+			pixels = (37 - from) * 85;
+			remainingPixels = (to - 1) * 95;
+		}
+
+		moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
+	}
+	
 }
 
 function getDirection(pos) {
@@ -269,68 +238,24 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 }
 
 function attatch(playerId, from, to) {
-	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
-	
+	document.getElementById(to).appendChild(document.getElementById('player' + playerId));	
 	if (to == 5 || to == 16 || to == 25 || to == 33) {
 		goldKey();
 	}
-	else if (to == 19) {
-		$('#dialogWrap').show(300)
-		$('#dialogContent').text('다음 턴 부터 술 여행 시작');
-		document.getElementById(28).appendChild(document.getElementById('player' + playerId));
-		$('#player' + beforeTurn + '').attr('data-journey', 1)
-		$("p").draggable();
-		$('#player' + nextTurn).addClass('blink')
-	}
-
 }
 
 function goldKey() {
 	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
 	$('#goldKeyContent').text(goldKeyOption[randomCount]);
 	$('#goldKeyWrap').show(300);
-	$('.statusLi').eq(beforeTurn).append('<span onclick="removeGoldKey($(this));" style="padding-left:10px;">' + goldKeyOption[randomCount] + '</span>')
+	$('.statusLi').eq(beforeTurn).append('<span onclick="removeGoldKey($(this));" style="padding-left:10px;">' + goldKeyOption[randomCount] + '</span>');
 
 }
 
 function removeGoldKey(el) {
 	$('#dialogWrap').show();
-	console.log(el.parent('statusLi'))
-	$('#dialogContent').html(el.parent('li').text().substr(0, 7) + '님이<br />' + el.text() + '을(를) 사용합니다')
+	$('#dialogContent').html(el.parent('li').text().substr(0, 7) + '님이<br />' + el.text() + '을(를) 사용합니다');
 	el.remove();
-}
-
-function journey(diceNumber) {
-	$('p').removeClass('blink')
-	var currentLoaction = $('#player' + beforeTurn + '').parent().attr('id')
-	if (currentLoaction == 28) {
-		currentLoaction = 0
-	} else {
-		currentLoaction = Number(currentLoaction.substr(7))
-	}
-
-	var location = currentLoaction + diceNumber;
-	if (location > 10) {
-		$('#dialogWrap').show(300)
-		$('#dialogContent').text('술 여행 종료');
-		$('.tile').find($('#player' + beforeTurn + '')).remove();
-		$('#13').append(memberArr[beforeTurn])
-		$('#player' + beforeTurn + '').attr('data-journey', 0)
-	} else {
-		var des = $('#journey' + location + '').position();
-		var el = ($('#player' + beforeTurn + ''))
-		el.css("position", "absolute");
-		el.animate({
-			top: des.top + "px",
-			left: des.left + "px"
-		}, function () {
-			$('#player' + nextTurn).addClass('blink')
-			el.remove().appendTo('#journey' + location + '').css("position", "");
-			el.remove().appendTo('#journey' + location + '').css("top", "");
-			el.remove().appendTo('#journey' + location + '').css("left", "");
-			$("p").draggable();
-		})
-	}
 }
 
 function drag() {
