@@ -38,6 +38,14 @@ io.sockets.on('connection', function (socket) {
 		showDice(data);
 	});
 	
+	socket.on('showTurnStatus', function(data){
+		showTurnStatus(data);	
+	});
+	
+	socket.on('appendChat', function(data){
+		appendChat(data, socket.id, connections);	
+	});
+	
 	socket.on('goldKey', function(playerId){
 		goldKey(playerId, socket.id, connections);
 	});
@@ -47,10 +55,12 @@ io.sockets.on('connection', function (socket) {
 		socket.disconnect();
 		removePlayer(socket.id);
 	});
+	
 	socket.on('showMyGoldKey', function(data){
-		showMyGoldKey(data,socket.id, connections);		
+		showMyGoldKey(data,socket.id, connections);
+		removeMyGoldKey(data.playerId, data.eq, socket.id, connections)
 	});
-
+	
 	socket.on('disconnect', function () {
 		console.log('Got disconnected!' + socket.id);
 		socket.disconnect();
@@ -94,12 +104,27 @@ function showDice(turn){
 	io.to(connections[turn]).emit('showDice');
 }
 
+function showTurnStatus(data){
+	
+	io.sockets.emit('showTurnStatus', {
+		data: data
+	});
+}
+
+function appendChat(data, id, connections){
+	var index = connections.indexOf(id);
+	console.log(data)
+	io.sockets.emit('appendChat', {
+		data: data,
+		playerId:index
+	});
+}
+
 function goldKey(playerId, id, connections){
 	io.to(connections[playerId]).emit('goldKey', {playerId:playerId, id:id, connections:connections});
 }
 
 function showMyGoldKey(data,id, connections){
-	//io.to(connections[data.id]).emit('removeGoldKey', data);
 	io.sockets.emit('showMyGoldKey', {
 		connections: connections,
 		id:id,
@@ -107,6 +132,6 @@ function showMyGoldKey(data,id, connections){
 	});
 	
 }
-//function removeGoldKey(data){
-//	
-//}
+function removeMyGoldKey(playerId, eq, id, connections){
+	io.to(connections[playerId]).emit('removeMyGoldKey', {playerId:playerId, eq:eq, id:id, connections:connections});
+}

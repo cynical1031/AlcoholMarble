@@ -60,8 +60,11 @@ function init() {
 		defaultRule = defaultRule.slice(0, (31 - gameRule.length));
 		gameRule = shuffle(defaultRule.concat(gameRule));
 	}
-	
-	socket.emit('init',{gameRule:gameRule, goldKeyOption:goldKeyOption.length});
+
+	socket.emit('init', {
+		gameRule: gameRule,
+		goldKeyOption: goldKeyOption.length
+	});
 }
 
 function shuffle(arr) {
@@ -75,36 +78,71 @@ function shuffle(arr) {
 }
 
 function rollDice() {
-		var die1 = $("#die1");
-		var die2 = $("#die2");
-		var status = $("#status");
-		var d1 = Math.floor(Math.random() * 4) + 1;
-		var d2 = Math.floor(Math.random() * 4) + 1;
-		var diceTotal = d1 + d2;
-		die1.text(d1);
-		die2.text(d2);
-		
-		status.text("나온 숫자 " + diceTotal + ".");
-		if (d1 == d2) {
-			status.append("더블 한번 더 ");
-			doubleFlag = false;
-		}
+	var dice1 = $("#dice1");
+	var dice2 = $("#dice2");
+	var d1 = Math.floor(Math.random()*4+1);//random num 1-6
+	var d2 = Math.floor(Math.random()*4+1);
+	dice1.attr("class","dice");//After clearing the last points animation
+	dice1.css('cursor','default');	
+	dice1.animate({left: '+2px'}, 100,function(){
+		dice1.addClass("dice_t");
+	}).delay(200).animate({top:'-2px'},100,function(){
+		dice1.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({opacity: 'show'},600,function(){
+		dice1.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
+		dice1.removeClass("dice_e").addClass("dice_"+d1);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice1.css('cursor','pointer');
+		$("#dice_mask").remove();//remove mask
+	});
+	dice2.attr("class","dice");//After clearing the last points animation
+	dice2.css('cursor','default');	
+	dice2.animate({left: '+2px'}, 100,function(){
+		dice2.addClass("dice_t");
+	}).delay(200).animate({top:'-2px'},100,function(){
+		dice2.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({opacity: 'show'},600,function(){
+		dice2.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
+		dice2.removeClass("dice_e").addClass("dice_"+d2);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice2.css('cursor','pointer');
+		$("#dice_mask").remove();//remove mask
+	});
 
-		beforeTurn = nextTurn;
-		var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
-		var location = currentLoaction + diceTotal;
-		if (doubleFlag) {
-			nextTurn++;
-			if (nextTurn < member) {
-				status.append(" 다음 턴 : Player" + player[nextTurn]);
-			} else if (nextTurn == member) {
-				status.append(" 다음 턴 : Player" + player[0]);
-				nextTurn = 0;
-			}
-		} else {
-			doubleFlag = true;
+	var status = "";
+	var diceTotal = d1 + d2;
+	status += "player"+nextTurn;
+	status += (" 숫자 : " + diceTotal + ", ");
+	if (d1 == d2) {
+		status += ("더블");
+		doubleFlag = false;
+	}
+	console.log(diceTotal)
+	beforeTurn = nextTurn;
+	var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
+	var location = currentLoaction + diceTotal;
+	if (doubleFlag) {
+		nextTurn++;
+		if (nextTurn < member) {
+			status += (" 다음 턴 : Player" + player[nextTurn]);
+		} else if (nextTurn == member) {
+			status += (" 다음 턴 : Player" + player[0]);
+			nextTurn = 0;
 		}
-		socket.emit('move',{playerId:beforeTurn, from:currentLoaction, to:location, diceNumber:diceTotal, nextTurn:nextTurn});
+	} else {
+		doubleFlag = true;
+	}
+	//console.log(status)
+	socket.emit('move', {
+		playerId: beforeTurn,
+		from: currentLoaction,
+		to: location,
+		diceNumber: diceTotal,
+		nextTurn: nextTurn
+	});
+	socket.emit('showTurnStatus', status);
 
 }
 
@@ -126,22 +164,22 @@ function animateMovement(playerId, from, to, diceNumber) {
 	} else {
 		elem.classList.add("player" + playerId + "_" + fromDirection);
 		if (from < 9) {
-			pixels = (8 - from) * 85;
-			remainingPixels = (to - 8) * 95;
+			pixels = (8 - from) * $('#1').width();
+			remainingPixels = (to - 8) * $('#1').width();
 		} else if (from < 21) {
 			pixels = (20 - from) * 85;
-			remainingPixels = (to - 20) * 95;
+			remainingPixels = (to - 20) * $('#1').width();
 		} else if (from < 27) {
 			pixels = (26 - from) * 85;
-			remainingPixels = (to - 26) * 95;
+			remainingPixels = (to - 26) * $('#1').width();
 		} else {
 			pixels = (37 - from) * 85;
-			remainingPixels = (to - 1) * 95;
+			remainingPixels = (to - 1) * $('#1').width();
 		}
 
 		moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
 	}
-	
+
 }
 
 function getDirection(pos) {
@@ -241,16 +279,118 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 }
 
 function attatch(playerId, from, to) {
-	document.getElementById(to).appendChild(document.getElementById('player' + playerId));	
+	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
+	$('#diceWrap ul li').eq(1).show()
 }
 
-function removeGoldKey(playerId, text,idx) {
+function removeGoldKey(playerId, text, idx) {
 	console.log(playerId)
 	console.log(text)
 	console.log(idx)
-	socket.emit('showMyGoldKey',{playerId:playerId, text:text, eq:idx})		
+	socket.emit('showMyGoldKey', {
+		playerId: playerId,
+		text: text,
+		eq: idx
+	})
 }
 
 function drag() {
 	$("p").draggable();
+}
+function sendChat(){
+	var content = $('#chatting').val()
+	if(content != '')
+	{
+		socket.emit('appendChat', content)
+		$('#chatting').val('');
+	}
+}
+function showSetting() {
+	$('#settingWrap').show();
+}
+
+function createBoard(data) {
+
+	member = data.connection.length;
+	var gameRule = data.data.gameRule;
+
+	//console.log(gameRule);
+	for (var i = 0; i < gameRule.length; i++) {
+		$('.game').eq(i).text(gameRule[i]);
+	}
+	for (var i = 0; i < member; i++) {
+		player.push("" + i);
+	}
+	for (var i = 0; i < player.length; i++) {
+		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+	}
+	$('#1').prepend(memberArr);
+	$("p").draggable();
+	$('#settingWrap').hide();
+	$('#diceWrap').show();
+	$('#goldKeyStatus').show();
+//	$('#goldKeyWrap').width(window.innerWidth);
+//	$('#goldKeyWrap').height(window.innerHeight);
+//	$('#dialogWrap').width(window.innerWidth);
+//	$('#dialogWrap').height(window.innerHeight);
+	$('#diceWrap').hide();
+
+	socket.emit('showDice', 0);
+}
+
+function move(data) {
+	//console.log(data.connection);
+	//console.log(data.id+" id");
+	var to = data.data.to;
+	animateMovement(data.data.playerId, data.data.from, data.data.to, data.data.diceNumber);
+	nextTurn = data.data.nextTurn;
+	$('p').removeClass('blink');
+	$('#player' + nextTurn).addClass('blink');
+	$('#diceWrap ul li').eq(1).hide()
+	setTimeout(function () {
+		$('#diceWrap').hide()
+		socket.emit('showDice', nextTurn);
+	}, 2000);
+	if (to == 5 || to == 16 || to == 25 || to == 33) {
+		socket.emit('goldKey', data.data.playerId)
+		//goldKey();
+	}
+}
+
+function showDice() {
+	$('#diceWrap').show();
+}
+
+function showTurnStatus(data){
+	$('.logContent').eq(1).append('<p>'+data.data+'</p>')
+}
+
+function appendChat(data)
+{
+	console.log(data)
+	$('.logContent').eq(0).append('<p><span class="chat">Player'+data.playerId+' : </span>'+data.data+'</p>')
+}
+
+function showGoldKey(data) {
+	if (data.id == data.connections[data.playerId]) {
+		goldKey(data.playerId);
+	}
+}
+
+function goldKey(playerId) {
+	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
+	$('#goldKeyContent').text(goldKeyOption[randomCount]);
+	$('#goldKeyWrap').show(300);
+	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + playerId + ',$(this).text(),$(this).index());" style="padding-left:10px; cursor:pointer;">' + goldKeyOption[randomCount] + '</span>');
+}
+
+function showMyGoldKey(data) {
+	console.log(data)
+	$('#dialogWrap').show();
+	$('#dialogContent').html('Player' + data.data.playerId + '님이<br />' + data.data.text + '을(를) 사용합니다');
+}
+
+function removeMyGoldKey(data) {
+	console.log(data)
+	$('.goldKeyText').eq(data.eq).remove()
 }

@@ -106,6 +106,7 @@ section {
 body {
 	line-height: 1;
 	font-family: 'BM JUA', '배달의민족 주아', sans-serif;
+	overflow-x:hidden;
 
 }
 
@@ -164,15 +165,13 @@ q:after {
 
 
 #tableWrap {
-	width: 1240px;
-	height: 740px;
+	width: 69%;
+	height: 98vh;
 	position: relative;
-
 }
 
 #tableWrap::after {
 	content: "";
-
 	background-size: cover;
 	opacity: 0.6;
 	top: 0;
@@ -188,7 +187,6 @@ table {
 	border-spacing: 0;
 	width: 100%;
 	height: 100%;
-	border: 7px solid #000;
 }
 
 tr {
@@ -208,28 +206,127 @@ td {
 	background-size: 100% 100%;
 	vertical-align: middle;
 	font-size: 14px;
-	width: 130px !important;
-	height: 90px !important;
+	width: 8.3% !important;
+	height: 12.5% !important;
 }
 
 
 #diceWrap {
 	position: absolute;
 	top: 500px;
-	left:230px;
+	left: 230px;
 	z-index: 3;
 	display: none;
 }
 
-div.dice {
+#logWrap {
+	width: 29%;
+	position: absolute;
+	height: 98vh;
+	right: 0;
+	top: 0;
+}
+
+#logWrap #logMenu {
+	width: 100%;
+
+}
+
+#logWrap #logMenu li {
 	float: left;
-	width: 32px;
-	background: #F5F5F5;
-	border: #999 1px solid;
-	padding: 10px;
-	font-size: 24px;
+	width: 60px;
+	margin: 0 10px;
+	line-height: 1.5em;
 	text-align: center;
-	margin: 5px;
+	cursor: pointer;
+	color: #fff;
+	background: #ccc;
+}
+
+.logContent {
+	width: 100%;
+	height: 90%;
+	position: absolute;
+	margin-top: 25px;
+	display: none;
+	overflow-y: scroll;
+	border: 1px solid #ccc;
+}
+
+#chatWrap {
+	width: 100%;
+	position: absolute;
+	bottom: 10px;
+	right: 0;
+}
+
+#chatWrap input {
+	width: 80%;
+	padding-left: 5px;
+}
+
+.dice {
+	width: 90px;
+	height: 90px;
+	background: url(../images/dice.png) no-repeat;
+}
+
+.dice_1 {
+	background-position: -5px -4px
+}
+
+.dice_2 {
+	background-position: -5px -107px
+}
+
+.dice_3 {
+	background-position: -5px -212px
+}
+
+.dice_4 {
+	background-position: -5px -317px
+}
+
+.dice_5 {
+	background-position: -5px -427px
+}
+
+.dice_6 {
+	background-position: -5px -535px
+}
+
+.dice_t {
+	background-position: -5px -651px
+}
+
+.dice_s {
+	background-position: -5px -763px
+}
+
+.dice_e {
+	background-position: -5px -876px
+}
+
+p#result {
+	text-align: center;
+	font-size: 16px
+}
+
+p#result span {
+	font-weight: bold;
+	color: #f30;
+	margin: 6px
+}
+
+#dice_mask {
+	width: 90px;
+	height: 90px;
+	background: #fff;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 999
 }
 
 .panel {
@@ -251,6 +348,8 @@ div.dice {
 
 #goldKeyWrap {
 	display: none;
+	width:100%;
+	height:100vh;
 	position: absolute;
 	top: 0;
 	background-color: rgba(0, 0, 0, 0.9);
@@ -359,25 +458,29 @@ div.dice {
 #dialogWrap {
 	display: none;
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	width:100%;
+	height:100vh;
 	top: 0;
 	background-color: rgba(0, 0, 0, 0.9);
 	z-index: 4;
-
-
 }
-#goldKeyStatus{
-	position:absolute;
-	width:300px;
-	top:0;
-	left:0;
-	margin-top:120px;
-	margin-left:130px;
+
+#goldKeyStatus {
+	position: absolute;
+	width: 500px;
+	top: 0;
+	left: 0;
+	margin-top: 120px;
+	margin-left: 130px;
 	display: none;
+	font-size: 24px;
 }
-#goldKeyStatus h4{text-align: center;margin-bottom:10px;}
-#statusList li{padding:8px 0;}
+
+#goldKeyStatus h4 {
+	text-align: center;
+	margin-bottom: 24px;
+}
+
 #dialogContent {
 	position: absolute;
 	top: 50%;
@@ -405,4 +508,10 @@ div.dice {
 	to {
 		visibility: hidden;
 	}
+}
+
+.clearFix {
+	content: "";
+	display: block;
+	clear: both;
 }

@@ -3,20 +3,20 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=0.8">
+	<meta name="viewport" content="width=device-width, initial-scale=0.5">
 	<title></title>
 	<link href="https://cdn.rawgit.com/YJSoft/Webfonts/0.1/BM_JUA.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src = "js/jquery.ui.touch-punch.min.js" > </script> 
+	<script src="js/jquery.ui.touch-punch.min.js"> </script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="js/connect.js"></script>
-	<script src="js/marble.js"></script>	
+	<script src="js/marble.js"></script>
 	<script>
 		$(document).ready(function() {
 			$('#settingWrap').hide();
-			
+			$('.logContent').eq(0).show();
 			$('.card').click(function() {
 				$(this).toggleClass('flipped');
 			});
@@ -27,6 +27,25 @@
 			$('#closeDialog').click(function() {
 				$('#dialogWrap').hide(300);
 			})
+			$('#logMenu li').click(function(){
+				var idx = $(this).index()
+				$('.logContent').hide();
+				$('.logContent').eq(idx).show()
+				if(idx == 1)
+				{
+					$('#chatWrap').hide();
+				}
+				else
+				{
+					$('#chatWrap').show();
+				}
+			})
+			$('body').keydown(function(key) {
+				if (key.keyCode == 13) {
+					sendChat()
+				}
+
+			});
 		})
 	</script>
 </head>
@@ -36,22 +55,12 @@
 		<div id="content">
 			<ul id="settingList">
 				<li>
-					<label for="playerCount">플레이어 선택</label>
-					<select name="playerCount" id="playerCount">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-				</select>				
-				</li>
-				<li>
 					<h4 id="gameRuleTitle">룰 설정</h4>
 					<textarea name="gameRule" id="gameRule" cols="30" rows="10" placeholder="주의사항 &#10;&#10;1. 게임을 /로 구분지어 주세요.&#10;2. 일정 수 미만일 경우 게임이&#10;   랜덤으로 추가됩니다.&#10;3. 게임은 최대 31개까지 지정할 수&#10;   있습니다."></textarea>
 				</li>
-				<li><div id="initButton" onclick="init()">생성</div></li>
+				<li>
+					<div id="initButton" onclick="init()">생성</div>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -286,7 +295,7 @@
 				<td id="26" class="tile panel corner"></td>
 			</tr>
 		</table>
-		
+
 	</div>
 	<div id="goldKeyStatus">
 		<h4>내 황금열쇠</h4>
@@ -296,14 +305,16 @@
 	</div>
 	<div id="diceWrap">
 		<ul>
-			<li style="clear:both;">
-				<div id="die1" class="dice">0</div>
-				<div id="die2" class="dice" >0</div>
+			<li style="">
+				<div id="dice1" class="dice dice_1" style="float:left;"></div>
+				<div id="dice2" class="dice dice_2" style="float:left;"></div>
 			</li>
-			<li><div onclick="rollDice()" style="clear: left;width:98px; text-align: center;padding:10px;margin-left:5px; background: #ccc; cursor:pointer;">굴리기</div></li>
-			<li><h2 id="status" style="clear:left; margin-top:15px;font-size:24px;"></h2></li>
+			<li style="">
+				<div onclick="rollDice()" style="clear:left; margin-top:0px;text-align: center;padding:10px;margin-left:5px; background: #ccc; cursor:pointer;">굴리기</div>
+			</li>
 		</ul>
 	</div>
+
 	<div id="dialogWrap">
 		<span id="closeDialog" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 		<p id="dialogContent">
@@ -324,6 +335,23 @@
 			</div>
 		</div>
 	</div>
+	<div id="logWrap">
+		<div class="clearFix">
+			<ul id="logMenu">
+				<li>chat</li>
+				<li>log</li>
+			</ul>
+		</div>
+		<div class="logContent">
+		</div>
+
+		<div id="chatWrap">
+			<input id="chatting" type="text">
+			<div onclick="sendChat()" style="float:right;height:100%; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
+		</div>
+		<div class="logContent">
+		</div>
+	</div>   
 </body>
 
 </html>
