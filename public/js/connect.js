@@ -1,5 +1,17 @@
 var socket = io.connect('http://192.168.0.16:8080');
 
+socket.on('roomList', function(rooms){
+	roomList(rooms)
+})
+
+socket.on('joined', function(){
+	joined();
+})
+
+socket.on('showInit', function(){
+	showInit();
+})
+
 socket.on('showSetting', function () {
 	showSetting();
 });
@@ -19,6 +31,10 @@ socket.on('rolling', function(data){
 socket.on('showDice', function () {
 	showDice();
 });
+
+socket.on('scrollMyMarker', function(data){
+	scrollMyMarker(data)
+})
 
 socket.on('showTurnStatus', function (data) {
 	showTurnStatus(data);

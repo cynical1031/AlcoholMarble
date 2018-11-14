@@ -48,8 +48,35 @@ var goldKeyOption = [
 var player = [];
 var memberArr = []
 var doubleFlag = true;
+function createRoom(){
+	var roomName = $('#roomName').val();
+	$('#roomNameWrap').hide();
+	socket.emit('createRoom',roomName)
+}
+function getRoomList(){
+	socket.emit('lobby')
+	socket.emit('roomList');
+}
+
+function roomList(rooms){
+	console.log(rooms)
+	for(var room in rooms)
+	{
+		$('#roomList').append('<li class="lists" onclick="joinRoom($(this));"><div>'+rooms[room]+'</div></li>')	
+	}
+}
+
+function joinRoom(el){
+	var roomName = el.children('div').text()
+	socket.emit('joinRoom', roomName)
+}
+function joined(){
+	$('#roomNameWrap').hide();
+	init();
+}
 
 function init() {
+	
 	if ($('#gameRule').val() == "") {
 		gameRule = [];
 	} else {
@@ -306,8 +333,14 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 
 function attatch(playerId, from, to) {
 	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
+	socket.emit('scrollMyMarker',playerId)
+	
 }
 
+function scrollMyMarker(playerId){
+	var el = document.getElementById('player' + playerId)
+	el.scrollIntoView();
+}
 function removeGoldKey(playerId, text, idx) {
 	console.log(playerId)
 	console.log(text)
@@ -334,6 +367,11 @@ function sendChat() {
 	}
 }
 
+function showInit(){
+	$('#roomListWrap').hide()
+	$('#tableWrap').show()	
+}
+
 function showSetting() {
 	$('#settingWrap').show();
 }
@@ -343,7 +381,9 @@ function createBoard(data) {
 	member = data.connection.length;
 	var gameRule = data.data.gameRule;
 
-	//console.log(gameRule);
+	console.log(data.idx);
+	$('#dialogWrap').show();
+	$('#dialogContent').html('게임을 시작합니다.<br />당신은 Player' + data.idx + '입니다.');
 	for (var i = 0; i < gameRule.length; i++) {
 		$('.game').eq(i).text(gameRule[i]);
 	}
@@ -358,12 +398,8 @@ function createBoard(data) {
 	$('#settingWrap').hide();
 	$('#diceWrap').show();
 	$('#goldKeyStatus').show();
-	//	$('#goldKeyWrap').width(window.innerWidth);
-	//	$('#goldKeyWrap').height(window.innerHeight);
-	//	$('#dialogWrap').width(window.innerWidth);
-	//	$('#dialogWrap').height(window.innerHeight);
-	//	$('#diceWrap').hide();
-
+	$('#player0').addClass('blink');
+	$('#rollButton').hide();
 	socket.emit('showDice', 0);
 }
 

@@ -15,8 +15,15 @@
 	<script src="js/marble.js"></script>
 	<script>
 		$(document).ready(function() {
+			getRoomList()
 			$('#settingWrap').hide();
 			$('.logContent').eq(0).show();
+			$('#roomBtn').click(function(){
+				$('#roomNameWrap').show()
+			});
+			$('#closeRoomName').click(function(){
+				$('#roomName').hide()
+			})
 			$('.card').click(function() {
 				$(this).toggleClass('flipped');
 			});
@@ -39,7 +46,7 @@
 				{
 					$('#chatWrap').show();
 				}
-			})
+			});
 			$('body').keydown(function(key) {
 				if (key.keyCode == 13) {
 					sendChat()
@@ -51,21 +58,31 @@
 </head>
 
 <body>
-
-	<div id="settingWrap">
-		<div id="content">
-			<ul id="settingList">
-				<li>
-					<h4 id="gameRuleTitle">룰 설정</h4>
-					<textarea name="gameRule" id="gameRule" cols="30" rows="10" placeholder="주의사항 &#10;&#10;1. 게임을 /로 구분지어 주세요.&#10;2. 일정 수 미만일 경우 게임이&#10;   랜덤으로 추가됩니다.&#10;3. 게임은 최대 31개까지 지정할 수&#10;   있습니다."></textarea>
-				</li>
-				<li>
-					<div id="initButton" onclick="init()">생성</div>
-				</li>
+	<div id="roomListWrap">		
+		<h1>Room</h1>
+		<div>
+			<ul id="roomList">
+				
 			</ul>
 		</div>
-	</div>
+		<div id="roomBtn" class="createRoom">
+			방 만들기
+		</div>		
+	</div>	
 	<div id="tableWrap">
+		<div id="settingWrap">
+			<div id="content">
+				<ul id="settingList">
+					<li>
+						<h4 id="gameRuleTitle">룰 설정</h4>
+						<textarea name="gameRule" id="gameRule" cols="30" rows="10" placeholder="주의사항 &#10;&#10;1. 게임을 /로 구분지어 주세요.&#10;2. 일정 수 미만일 경우 게임이&#10;   랜덤으로 추가됩니다.&#10;3. 게임은 최대 31개까지 지정할 수&#10;   있습니다."></textarea>
+					</li>
+					<li>
+						<div id="initButton" onclick="init()">생성</div>
+					</li>
+				</ul>
+			</div>
+		</div>
 		<table id="gamePanel" style="position:absolute">
 			<tr>
 				<td class="tile panel corner game"></td>
@@ -333,12 +350,12 @@
 			</div>
 		</div>
 	</div>
-	<div id="dialogWrap">
+	<div id="dialogWrap" class="fullSize">
 		<span id="closeDialog" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 		<p id="dialogContent">
 		</p>
 	</div>
-	<div id="goldKeyWrap">
+	<div id="goldKeyWrap"  class="fullSize">
 		<div class="container">
 			<span id="closeCard" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 			<div class="card">
@@ -353,7 +370,15 @@
 			</div>
 		</div>
 	</div>
-
+	<div id="roomNameWrap"  class="fullSize">
+		<span id="closeRoomName" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
+		<div id="createRoomContent">
+			<input id="roomName" type="text" placeholder="방 이름을 입력해주세요."/>
+			<div class="createRoom" onclick="createRoom();">
+				방 생성
+			</div>	
+		</div>	
+	</div>
 </body>
 
 </html>
