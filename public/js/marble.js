@@ -9,7 +9,7 @@ var defaultRule = [
 			"나빼고 원샷",
 			"007 빵",
 			"눈치게임",
-			"한 번 쉬기",
+			"릴렉스 타임(10분)",
 			"너 마셔",
 			"흑기사",
 			"랜덤게임",
@@ -23,7 +23,6 @@ var defaultRule = [
 			"더 게임 오브 데스",
 			"공산당 게임",
 			"바니바니",
-			"더 게임 오브 데쓰",
 			"손병호 게임",
 			"구구단을 외자",
 			"후라이팬 놀이",
@@ -35,7 +34,8 @@ var defaultRule = [
 			"세 잔 적립",
 			"뚜껑 꺾기",
 			"Happy New Year!",
-			"업 다운"
+			"업 다운",
+			"다같이 음료수"
 		];
 var goldKeyOption = [
 			"한잔 쉬기",
@@ -78,42 +78,16 @@ function shuffle(arr) {
 }
 
 function rollDice() {
-	var dice1 = $("#dice1");
-	var dice2 = $("#dice2");
-	var d1 = Math.floor(Math.random()*4+1);//random num 1-6
-	var d2 = Math.floor(Math.random()*4+1);
-	dice1.attr("class","dice");//After clearing the last points animation
-	dice1.css('cursor','default');	
-	dice1.animate({left: '+2px'}, 100,function(){
-		dice1.addClass("dice_t");
-	}).delay(200).animate({top:'-2px'},100,function(){
-		dice1.removeClass("dice_t").addClass("dice_s");
-	}).delay(200).animate({opacity: 'show'},600,function(){
-		dice1.removeClass("dice_s").addClass("dice_e");
-	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-		dice1.removeClass("dice_e").addClass("dice_"+d1);
-		//$("#result").html("Your throwing points are<span>"+num+"</span>");
-		dice1.css('cursor','pointer');
-		$("#dice_mask").remove();//remove mask
-	});
-	dice2.attr("class","dice");//After clearing the last points animation
-	dice2.css('cursor','default');	
-	dice2.animate({left: '+2px'}, 100,function(){
-		dice2.addClass("dice_t");
-	}).delay(200).animate({top:'-2px'},100,function(){
-		dice2.removeClass("dice_t").addClass("dice_s");
-	}).delay(200).animate({opacity: 'show'},600,function(){
-		dice2.removeClass("dice_s").addClass("dice_e");
-	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-		dice2.removeClass("dice_e").addClass("dice_"+d2);
-		//$("#result").html("Your throwing points are<span>"+num+"</span>");
-		dice2.css('cursor','pointer');
-		$("#dice_mask").remove();//remove mask
-	});
-
+	$('#rollButton').hide()
 	var status = "";
+	var d1 = Math.floor(Math.random() * 4 + 1); //random num 1-6
+	var d2 = Math.floor(Math.random() * 4 + 1);
 	var diceTotal = d1 + d2;
-	status += "player"+nextTurn;
+	socket.emit('rolling', {
+		d1: d1,
+		d2: d2
+	});
+	status += "player" + nextTurn;
 	status += (" 숫자 : " + diceTotal + ", ");
 	if (d1 == d2) {
 		status += ("더블");
@@ -146,6 +120,58 @@ function rollDice() {
 
 }
 
+function rolling(d1, d2) {
+	var dice1 = $("#dice1");
+	var dice2 = $("#dice2");
+	dice1.attr("class", "dice"); //After clearing the last points animation
+	dice1.css('cursor', 'default');
+	dice1.animate({
+		left: '+2px'
+	}, 100, function () {
+		dice1.addClass("dice_t");
+	}).delay(200).animate({
+		top: '-2px'
+	}, 100, function () {
+		dice1.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({
+		opacity: 'show'
+	}, 600, function () {
+		dice1.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({
+		left: '-2px',
+		top: '2px'
+	}, 100, function () {
+		dice1.removeClass("dice_e").addClass("dice_" + d1);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice1.css('cursor', 'pointer');
+		$("#dice_mask").remove(); //remove mask
+	});
+	dice2.attr("class", "dice"); //After clearing the last points animation
+	dice2.css('cursor', 'default');
+	dice2.animate({
+		left: '+2px'
+	}, 100, function () {
+		dice2.addClass("dice_t");
+	}).delay(200).animate({
+		top: '-2px'
+	}, 100, function () {
+		dice2.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({
+		opacity: 'show'
+	}, 600, function () {
+		dice2.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({
+		left: '-2px',
+		top: '2px'
+	}, 100, function () {
+		dice2.removeClass("dice_e").addClass("dice_" + d2);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice2.css('cursor', 'pointer');
+		$("#dice_mask").remove(); //remove mask
+	});
+	return d1 + d2
+}
+
 function animateMovement(playerId, from, to, diceNumber) {
 	var elem = document.getElementById("player" + playerId);
 	if (to > 36) {
@@ -165,16 +191,16 @@ function animateMovement(playerId, from, to, diceNumber) {
 		elem.classList.add("player" + playerId + "_" + fromDirection);
 		if (from < 9) {
 			pixels = (8 - from) * $('#1').width();
-			remainingPixels = (to - 8) * $('#1').width();
-		} else if (from < 21) {
-			pixels = (20 - from) * 85;
-			remainingPixels = (to - 20) * $('#1').width();
+			remainingPixels = (to - 8) * 80;
+		} else if (from < 20) {
+			pixels = (19 - from) * 80;
+			remainingPixels = (to - 20) * 80;
 		} else if (from < 27) {
-			pixels = (26 - from) * 85;
-			remainingPixels = (to - 26) * $('#1').width();
+			pixels = (26 - from) * 80;
+			remainingPixels = (to - 26) * 80;
 		} else {
-			pixels = (37 - from) * 85;
-			remainingPixels = (to - 1) * $('#1').width();
+			pixels = (37 - from) * 80;
+			remainingPixels = (to - 1) * 80;
 		}
 
 		moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
@@ -280,31 +306,34 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 
 function attatch(playerId, from, to) {
 	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
-	$('#diceWrap ul li').eq(1).show()
 }
 
 function removeGoldKey(playerId, text, idx) {
 	console.log(playerId)
 	console.log(text)
 	console.log(idx)
-	socket.emit('showMyGoldKey', {
-		playerId: playerId,
-		text: text,
-		eq: idx
-	})
+	var r = confirm("황금열쇠를 사용하시겠습니까?");
+	if (r == true) {
+		socket.emit('showMyGoldKey', {
+			playerId: playerId,
+			text: text,
+			eq: idx
+		});
+	}
 }
 
 function drag() {
 	$("p").draggable();
 }
-function sendChat(){
+
+function sendChat() {
 	var content = $('#chatting').val()
-	if(content != '')
-	{
+	if (content != '') {
 		socket.emit('appendChat', content)
 		$('#chatting').val('');
 	}
 }
+
 function showSetting() {
 	$('#settingWrap').show();
 }
@@ -329,11 +358,11 @@ function createBoard(data) {
 	$('#settingWrap').hide();
 	$('#diceWrap').show();
 	$('#goldKeyStatus').show();
-//	$('#goldKeyWrap').width(window.innerWidth);
-//	$('#goldKeyWrap').height(window.innerHeight);
-//	$('#dialogWrap').width(window.innerWidth);
-//	$('#dialogWrap').height(window.innerHeight);
-	$('#diceWrap').hide();
+	//	$('#goldKeyWrap').width(window.innerWidth);
+	//	$('#goldKeyWrap').height(window.innerHeight);
+	//	$('#dialogWrap').width(window.innerWidth);
+	//	$('#dialogWrap').height(window.innerHeight);
+	//	$('#diceWrap').hide();
 
 	socket.emit('showDice', 0);
 }
@@ -346,9 +375,8 @@ function move(data) {
 	nextTurn = data.data.nextTurn;
 	$('p').removeClass('blink');
 	$('#player' + nextTurn).addClass('blink');
-	$('#diceWrap ul li').eq(1).hide()
+	$('#rollButton').hide()
 	setTimeout(function () {
-		$('#diceWrap').hide()
 		socket.emit('showDice', nextTurn);
 	}, 2000);
 	if (to == 5 || to == 16 || to == 25 || to == 33) {
@@ -358,17 +386,19 @@ function move(data) {
 }
 
 function showDice() {
-	$('#diceWrap').show();
+	$('#rollButton').show()
 }
 
-function showTurnStatus(data){
-	$('.logContent').eq(1).append('<p>'+data.data+'</p>')
+function showTurnStatus(data) {
+	setTimeout(function () {
+		$('#turnStatus').html(data.data);
+	}, 2000);
+	$('.logContent').eq(1).append('<p>' + data.data + '</p>')
 }
 
-function appendChat(data)
-{
+function appendChat(data) {
 	console.log(data)
-	$('.logContent').eq(0).append('<p><span class="chat">Player'+data.playerId+' : </span>'+data.data+'</p>')
+	$('.logContent').eq(0).append('<p><span class="chat">Player' + data.playerId + ' : </span>' + data.data + '</p>')
 }
 
 function showGoldKey(data) {

@@ -34,6 +34,10 @@ io.sockets.on('connection', function (socket) {
 		move(socket.id, data);
 	});
 	
+	socket.on('rolling', function(data){
+		rolling(data)
+	});
+	
 	socket.on('showDice', function(data){
 		showDice(data);
 	});
@@ -98,6 +102,10 @@ function move(id, data) {
 		id:id,
 		data: data
 	});
+}
+
+function rolling(data){
+	io.sockets.emit('rolling', data);
 }
 
 function showDice(turn){

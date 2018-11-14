@@ -51,6 +51,7 @@
 </head>
 
 <body>
+
 	<div id="settingWrap">
 		<div id="content">
 			<ul id="settingList">
@@ -295,26 +296,43 @@
 				<td id="26" class="tile panel corner"></td>
 			</tr>
 		</table>
+		<div id="logWrap">
+			<div class="clearFix">
+				<ul id="logMenu">
+					<li>chat</li>
+					<li>log</li>
+				</ul>
+			</div>
+			<div class="logContent">
+			</div>
 
-	</div>
-	<div id="goldKeyStatus">
-		<h4>내 황금열쇠</h4>
-		<div id="statusList">
+			<div id="chatWrap">
+				<input id="chatting" type="text">
+				<div onclick="sendChat()" style="float:right;height:100%; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
+			</div>
+			<div class="logContent">
+			
+			</div>
+			<div id="turnStatus"></div>
+			<div id="goldKeyStatus">
+				<h4>내 황금열쇠</h4>
+				<div id="statusList">
 
+				</div>
+			</div>
+			<div id="diceWrap">
+				<ul>
+					<li style="">
+						<div id="dice1" class="dice dice_1" style="float:left;"></div>
+						<div id="dice2" class="dice dice_2" style="float:left;"></div>
+					</li>
+					<li style="">
+						<div id="rollButton" onclick="rollDice()" style="clear:left; margin-top:0px;text-align: center;padding:10px;margin-left:5px; background: #ccc; cursor:pointer;">굴리기</div>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
-	<div id="diceWrap">
-		<ul>
-			<li style="">
-				<div id="dice1" class="dice dice_1" style="float:left;"></div>
-				<div id="dice2" class="dice dice_2" style="float:left;"></div>
-			</li>
-			<li style="">
-				<div onclick="rollDice()" style="clear:left; margin-top:0px;text-align: center;padding:10px;margin-left:5px; background: #ccc; cursor:pointer;">굴리기</div>
-			</li>
-		</ul>
-	</div>
-
 	<div id="dialogWrap">
 		<span id="closeDialog" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 		<p id="dialogContent">
@@ -335,23 +353,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="logWrap">
-		<div class="clearFix">
-			<ul id="logMenu">
-				<li>chat</li>
-				<li>log</li>
-			</ul>
-		</div>
-		<div class="logContent">
-		</div>
 
-		<div id="chatWrap">
-			<input id="chatting" type="text">
-			<div onclick="sendChat()" style="float:right;height:100%; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
-		</div>
-		<div class="logContent">
-		</div>
-	</div>   
 </body>
 
 </html>

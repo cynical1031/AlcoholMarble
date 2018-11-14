@@ -12,17 +12,21 @@ socket.on('move', function (data) {
 	move(data);
 });
 
+socket.on('rolling', function(data){
+	rolling(data.d1, data.d2)
+});
+
 socket.on('showDice', function () {
 	showDice();
 });
 
-socket.on('showTurnStatus', function(data){
+socket.on('showTurnStatus', function (data) {
 	showTurnStatus(data);
 });
 
-socket.on('appendChat', function(data){
-		appendChat(data);	
-	});
+socket.on('appendChat', function (data) {
+	appendChat(data);
+});
 
 socket.on('showMyGoldKey', function (data) {
 	//console.log(data)
@@ -37,8 +41,6 @@ socket.on('removeGoldKey', function (data) {
 	removeGoldKey(data);
 });
 
-socket.on('removeMyGoldKey', function(data){
+socket.on('removeMyGoldKey', function (data) {
 	removeMyGoldKey(data);
 });
-
-
