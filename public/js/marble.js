@@ -1,4 +1,8 @@
 var member = 0;
+var myRoom = "";
+var myId = "";
+var myIdx = 0;
+var memberList = []
 var nextTurn = 0;
 var beforeTurn = 0;
 var gameRule = [];
@@ -89,6 +93,7 @@ function init() {
 	}
 
 	socket.emit('init', {
+		myRoom:myRoom,
 		gameRule: gameRule,
 		goldKeyOption: goldKeyOption.length
 	});
@@ -348,9 +353,10 @@ function removeGoldKey(playerId, text, idx) {
 	var r = confirm("황금열쇠를 사용하시겠습니까?");
 	if (r == true) {
 		socket.emit('showMyGoldKey', {
-			playerId: playerId,
+			playerId: "Player"+playerId,
 			text: text,
-			eq: idx
+			memberId:memberList[playerId],
+			eq:idx
 		});
 	}
 }
@@ -362,14 +368,16 @@ function drag() {
 function sendChat() {
 	var content = $('#chatting').val()
 	if (content != '') {
-		socket.emit('appendChat', content)
+		socket.emit('appendChat', {myIdx: myIdx, content:content})
 		$('#chatting').val('');
 	}
 }
 
-function showInit(){
+function showInit(data){
 	$('#roomListWrap').hide()
-	$('#tableWrap').show()	
+	$('#tableWrap').show()
+	myRoom = data;
+	console.log(myRoom)
 }
 
 function showSetting() {
@@ -378,10 +386,13 @@ function showSetting() {
 
 function createBoard(data) {
 
-	member = data.connection.length;
+	member = data.memberList.length;
 	var gameRule = data.data.gameRule;
-
-	console.log(data.idx);
+	memberList = data.memberList
+	//console.log();
+	myIdx = data.idx;
+	myId = data.memberList[data.idx]
+	console.log(myId)
 	$('#dialogWrap').show();
 	$('#dialogContent').html('게임을 시작합니다.<br />당신은 Player' + data.idx + '입니다.');
 	for (var i = 0; i < gameRule.length; i++) {
@@ -400,23 +411,27 @@ function createBoard(data) {
 	$('#goldKeyStatus').show();
 	$('#player0').addClass('blink');
 	$('#rollButton').hide();
-	socket.emit('showDice', 0);
+	socket.emit('showDice', data.memberList[0]);
 }
 
 function move(data) {
 	//console.log(data.connection);
 	//console.log(data.id+" id");
 	var to = data.data.to;
+	console.log(data.data.playerId)
 	animateMovement(data.data.playerId, data.data.from, data.data.to, data.data.diceNumber);
 	nextTurn = data.data.nextTurn;
 	$('p').removeClass('blink');
 	$('#player' + nextTurn).addClass('blink');
 	$('#rollButton').hide()
 	setTimeout(function () {
-		socket.emit('showDice', nextTurn);
+		socket.emit('showDice', memberList[nextTurn]);
 	}, 2000);
 	if (to == 5 || to == 16 || to == 25 || to == 33) {
-		socket.emit('goldKey', data.data.playerId)
+		if(data.data.playerId == myIdx)
+		{
+			socket.emit('goldKey', memberList[beforeTurn])
+		}
 		//goldKey();
 	}
 }
@@ -438,22 +453,28 @@ function appendChat(data) {
 }
 
 function showGoldKey(data) {
-	if (data.id == data.connections[data.playerId]) {
-		goldKey(data.playerId);
-	}
-}
-
-function goldKey(playerId) {
+//	if (data.id == data.connections[data.playerId]) {
+//		goldKey(data.playerId);
+//	}
+//	console.log(data)
+	var idx = memberList.indexOf(data)
 	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
 	$('#goldKeyContent').text(goldKeyOption[randomCount]);
 	$('#goldKeyWrap').show(300);
-	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + playerId + ',$(this).text(),$(this).index());" style="padding-left:10px; cursor:pointer;">' + goldKeyOption[randomCount] + '</span>');
+	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + idx + ',$(this).text(),$(this).index());" style="padding-left:10px; cursor:pointer;">' + goldKeyOption[randomCount] + '</span>');
+}
+
+function goldKey(playerId) {
+//	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
+//	$('#goldKeyContent').text(goldKeyOption[randomCount]);
+//	$('#goldKeyWrap').show(300);
+//	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + playerId + ',$(this).text(),$(this).index());" style="padding-left:10px; cursor:pointer;">' + goldKeyOption[randomCount] + '</span>');
 }
 
 function showMyGoldKey(data) {
 	console.log(data)
 	$('#dialogWrap').show();
-	$('#dialogContent').html('Player' + data.data.playerId + '님이<br />' + data.data.text + '을(를) 사용합니다');
+	$('#dialogContent').html(data.playerId + '님이<br />' + data.text + '을(를) 사용합니다');
 }
 
 function removeMyGoldKey(data) {

@@ -1,5 +1,9 @@
 var socket = io.connect('http://192.168.0.16:8080');
 
+socket.on('existRoom', function(){
+	alert('이미 방이 존재합니다.')
+})
+
 socket.on('roomList', function(rooms){
 	roomList(rooms)
 })
@@ -8,8 +12,8 @@ socket.on('joined', function(){
 	joined();
 })
 
-socket.on('showInit', function(){
-	showInit();
+socket.on('showInit', function(data){
+	showInit(data);
 })
 
 socket.on('showSetting', function () {
