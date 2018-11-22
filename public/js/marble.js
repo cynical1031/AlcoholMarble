@@ -1,4 +1,9 @@
+var intervalgetRoom;
 var member = 0;
+var myRoom = "";
+var myId = "";
+var myIdx = 0;
+var memberList = []
 var nextTurn = 0;
 var beforeTurn = 0;
 var gameRule = [];
@@ -9,7 +14,7 @@ var defaultRule = [
 			"나빼고 원샷",
 			"007 빵",
 			"눈치게임",
-			"한 번 쉬기",
+			"릴렉스 타임(10분)",
 			"너 마셔",
 			"흑기사",
 			"랜덤게임",
@@ -23,7 +28,6 @@ var defaultRule = [
 			"더 게임 오브 데스",
 			"공산당 게임",
 			"바니바니",
-			"더 게임 오브 데쓰",
 			"손병호 게임",
 			"구구단을 외자",
 			"후라이팬 놀이",
@@ -35,7 +39,8 @@ var defaultRule = [
 			"세 잔 적립",
 			"뚜껑 꺾기",
 			"Happy New Year!",
-			"업 다운"
+			"업 다운",
+			"다같이 음료수"
 		];
 var goldKeyOption = [
 			"한잔 쉬기",
@@ -45,11 +50,128 @@ var goldKeyOption = [
 			"주류 제조권",
 			"물 한잔"
 		];
+var imgMap = {
+	"걸린 사람 원샷" : "1.jpg",
+	"양 옆 마시기" : "2.jpg",
+	"다같이 원샷" : "3.jpg",
+	"나빼고 원샷" : "4.png",
+	"007 빵" : "5.jpg",
+	"눈치게임" : "6.png",
+	"릴렉스 타임(10분)" : "7.png",
+	"너 마셔" : "8.jpg",
+	"흑기사" : "9.png",
+	"랜덤게임" : "10.png",
+	"3.6.9" : "11.png",
+	"배스킨라빈스 31" : "12.jpg",
+	"경마게임" : "13.png",
+	"xx에 가면" : "14.png",
+	"혼자왔습니다." : "15.jpg",
+	"바보게임" : "16.png",
+	"훈민정음" : "17.png",
+	"더 게임 오브 데스" : "18.png",
+	"공산당 게임" : "19.jpg",
+	"바니바니" : "20.png",
+	"손병호 게임" : "21.jpg",
+	"구구단을 외자" : "22.png",
+	"후라이팬 놀이" : "23.png",
+	"딸기 게임" : "24.png",
+	"할머니 게임" : "25.jpg",
+	"아파트 게임" : "26.png",
+	"다같이 물 한잔" : "27.png",
+	"파도 타기" : "28.png",
+	"세 잔 적립" : "29.png",
+	"뚜껑 꺾기" : "30.png",
+	"Happy New Year!" : "31.png",
+	"업 다운" : "",
+	"다같이 음료수" : ""
+	
+}
 var player = [];
 var memberArr = []
 var doubleFlag = true;
+var connectFlag = false;
+var removed = []
+
+function createRoom() {
+	var roomName = $('#roomName').val();
+	$('#roomNameWrap').hide();
+	socket.emit('createRoom', roomName)
+
+}
+
+function getRoomList() {
+	//socket.emit('lobby')
+	socket.emit('roomList');
+}
+
+function roomList(rooms) {
+	for (var room in rooms) {
+		$('#roomList').html('<li class="lists" onclick="joinRoom($(this));"><div>' + rooms[room] + '</div></li>')
+	}
+}
+
+function joinRoom(el) {
+	clearInterval(intervalgetRoom)
+	var roomName = el.children('div').text()
+	socket.emit('joinRoom', roomName)
+	socket.emit('sendMemberList', roomName)
+}
+
+function recieveMemberList(data) {
+	member = data.memberList.length;
+	memberList = data.memberList
+	myIdx = data.idx;
+	myId = data.memberList[data.idx]
+}
+
+function disconnected(data) {
+	//	console.log(data.removed)
+	//	removed.push(data.removed)
+	var removeIndex = memberList.indexOf(data.removed);
+	removed.push(removeIndex)
+	$('#player' + removeIndex).hide()
+	if (doubleFlag) {
+		nextTurn++
+		if (nextTurn < member) {
+			socket.emit('showDice', {
+				member: memberList[nextTurn],
+				memberList: memberList
+			});
+		} else if (nextTurn == member) {
+			socket.emit('showDice', {
+				member: memberList[0],
+				memberList: memberList
+			});
+			nextTurn = 0;
+		}
+
+	} else {
+		socket.emit('showDice', {
+			member: memberList[beforeTurn],
+			memberList: memberList
+		});
+	}
+
+	$('.logContent').eq(0).append('<p><span class="chat">Player' + removeIndex + '</span>님이 퇴장하였습니다.</p>')
+
+}
+
+function checkValue(value, arr) {
+	var status = true;
+
+	for (var i = 0; i < arr.length; i++) {
+		var member = arr[i];
+		if (member == value) {
+			status = false;
+			break;
+		}
+	}
+
+	return status;
+}
 
 function init() {
+
 	if ($('#gameRule').val() == "") {
 		gameRule = [];
 	} else {
@@ -62,7 +184,9 @@ function init() {
 	}
 
 	socket.emit('init', {
+		myRoom: myRoom,
 		gameRule: gameRule,
+		memberList: memberList,
 		goldKeyOption: goldKeyOption.length
 	});
 }
@@ -78,75 +202,130 @@ function shuffle(arr) {
 }
 
 function rollDice() {
-	var dice1 = $("#dice1");
-	var dice2 = $("#dice2");
-	var d1 = Math.floor(Math.random()*4+1);//random num 1-6
-	var d2 = Math.floor(Math.random()*4+1);
-	dice1.attr("class","dice");//After clearing the last points animation
-	dice1.css('cursor','default');	
-	dice1.animate({left: '+2px'}, 100,function(){
-		dice1.addClass("dice_t");
-	}).delay(200).animate({top:'-2px'},100,function(){
-		dice1.removeClass("dice_t").addClass("dice_s");
-	}).delay(200).animate({opacity: 'show'},600,function(){
-		dice1.removeClass("dice_s").addClass("dice_e");
-	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-		dice1.removeClass("dice_e").addClass("dice_"+d1);
-		//$("#result").html("Your throwing points are<span>"+num+"</span>");
-		dice1.css('cursor','pointer');
-		$("#dice_mask").remove();//remove mask
-	});
-	dice2.attr("class","dice");//After clearing the last points animation
-	dice2.css('cursor','default');	
-	dice2.animate({left: '+2px'}, 100,function(){
-		dice2.addClass("dice_t");
-	}).delay(200).animate({top:'-2px'},100,function(){
-		dice2.removeClass("dice_t").addClass("dice_s");
-	}).delay(200).animate({opacity: 'show'},600,function(){
-		dice2.removeClass("dice_s").addClass("dice_e");
-	}).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-		dice2.removeClass("dice_e").addClass("dice_"+d2);
-		//$("#result").html("Your throwing points are<span>"+num+"</span>");
-		dice2.css('cursor','pointer');
-		$("#dice_mask").remove();//remove mask
-	});
-
+	$('#rollButton').hide()
+	console.log('here?')
 	var status = "";
+	var d1 = Math.floor(Math.random() * 4 + 1); //random num 1-6
+	var d2 = Math.floor(Math.random() * 4 + 1);
 	var diceTotal = d1 + d2;
-	status += "player"+nextTurn;
-	status += (" 숫자 : " + diceTotal + ", ");
+	socket.emit('rolling', {
+		d1: d1,
+		d2: d2
+	});
+	status += (" 숫자 : " + diceTotal + " ");
 	if (d1 == d2) {
 		status += ("더블");
 		doubleFlag = false;
 	}
-	console.log(diceTotal)
-	beforeTurn = nextTurn;
-	var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
-	var location = currentLoaction + diceTotal;
-	if (doubleFlag) {
-		nextTurn++;
-		if (nextTurn < member) {
-			status += (" 다음 턴 : Player" + player[nextTurn]);
-		} else if (nextTurn == member) {
-			status += (" 다음 턴 : Player" + player[0]);
-			nextTurn = 0;
-		}
-	} else {
-		doubleFlag = true;
-	}
-	//console.log(status)
-	socket.emit('move', {
-		playerId: beforeTurn,
-		from: currentLoaction,
-		to: location,
-		diceNumber: diceTotal,
-		nextTurn: nextTurn
-	});
-	socket.emit('showTurnStatus', status);
 
+	if (checkValue(memberList.indexOf(memberList[nextTurn]), removed)) {
+		beforeTurn = nextTurn;
+		var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
+		var location = currentLoaction + diceTotal;
+		if (doubleFlag) {
+			nextTurn++;
+			if (nextTurn == member) {
+				nextTurn = 0;
+			}
+		} else {
+			doubleFlag = true;
+		}
+		socket.emit('move', {
+			playerId: beforeTurn,
+			from: currentLoaction,
+			to: location,
+			diceNumber: diceTotal,
+			nextTurn: nextTurn
+		});
+	} else {
+		console.log('here??')
+		nextTurn++;
+		var currentLoaction = Number($('#player' + beforeTurn + '').parent().attr('id'));
+		var location = currentLoaction + diceTotal;
+		beforeTurn = nextTurn;
+		
+		if (doubleFlag) {
+			nextTurn++;
+			if (nextTurn >= member) {
+				nextTurn = 0;
+			}
+		} else {
+			nextTurn--;
+			doubleFlag = true;
+		}
+		if(beforeTurn >= member)
+		{
+			beforeTurn = 0
+		}
+		console.log(beforeTurn)
+		console.log(nextTurn)
+		socket.emit('move', {
+			playerId: beforeTurn,
+			from: currentLoaction,
+			to: location,
+			diceNumber: diceTotal,
+			nextTurn: nextTurn
+		});
+		
+	}
+	socket.emit('showTurnStatus', status);
+}
+
+function rolling(d1, d2) {
+	var dice1 = $("#dice1");
+	var dice2 = $("#dice2");
+	dice1.attr("class", "dice"); //After clearing the last points animation
+	dice1.css('cursor', 'default');
+	dice1.animate({
+		left: '+2px'
+	}, 100, function () {
+		dice1.addClass("dice_t");
+	}).delay(200).animate({
+		top: '-2px'
+	}, 100, function () {
+		dice1.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({
+		opacity: 'show'
+	}, 600, function () {
+		dice1.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({
+		left: '-2px',
+		top: '2px'
+	}, 100, function () {
+		dice1.removeClass("dice_e").addClass("dice_" + d1);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice1.css('cursor', 'pointer');
+		$("#dice_mask").remove(); //remove mask
+	});
+	dice2.attr("class", "dice"); //After clearing the last points animation
+	dice2.css('cursor', 'default');
+	dice2.animate({
+		left: '+2px'
+	}, 100, function () {
+		dice2.addClass("dice_t");
+	}).delay(200).animate({
+		top: '-2px'
+	}, 100, function () {
+		dice2.removeClass("dice_t").addClass("dice_s");
+	}).delay(200).animate({
+		opacity: 'show'
+	}, 600, function () {
+		dice2.removeClass("dice_s").addClass("dice_e");
+	}).delay(100).animate({
+		left: '-2px',
+		top: '2px'
+	}, 100, function () {
+		dice2.removeClass("dice_e").addClass("dice_" + d2);
+		//$("#result").html("Your throwing points are<span>"+num+"</span>");
+		dice2.css('cursor', 'pointer');
+		$("#dice_mask").remove(); //remove mask
+	});
+	return d1 + d2
 }
 
 function animateMovement(playerId, from, to, diceNumber) {
+	console.log(playerId)
+
 	var elem = document.getElementById("player" + playerId);
 	if (to > 36) {
 		to = to - 36
@@ -165,21 +344,20 @@ function animateMovement(playerId, from, to, diceNumber) {
 		elem.classList.add("player" + playerId + "_" + fromDirection);
 		if (from < 9) {
 			pixels = (8 - from) * $('#1').width();
-			remainingPixels = (to - 8) * $('#1').width();
-		} else if (from < 21) {
-			pixels = (20 - from) * 85;
-			remainingPixels = (to - 20) * $('#1').width();
+			remainingPixels = (to - 8) * 80;
+		} else if (from < 20) {
+			pixels = (19 - from) * 80;
+			remainingPixels = (to - 20) * 80;
 		} else if (from < 27) {
-			pixels = (26 - from) * 85;
-			remainingPixels = (to - 26) * $('#1').width();
+			pixels = (26 - from) * 80;
+			remainingPixels = (to - 26) * 80;
 		} else {
-			pixels = (37 - from) * 85;
-			remainingPixels = (to - 1) * $('#1').width();
+			pixels = (37 - from) * 80;
+			remainingPixels = (to - 1) * 80;
 		}
 
 		moveMarker(pixels, fromDirection, elem, toDirection, playerId, from, to, remainingPixels);
 	}
-
 }
 
 function getDirection(pos) {
@@ -279,44 +457,86 @@ function moveMarker(pixels, direction, elem, toDirection, playerId, from, to, re
 }
 
 function attatch(playerId, from, to) {
-	document.getElementById(to).appendChild(document.getElementById('player' + playerId));
-	$('#diceWrap ul li').eq(1).show()
+	document.getElementById(to).appendChild(document.getElementById('player' + playerId));	
+	if (to == 5 || to == 16 || to == 25 || to == 33) {
+		if (playerId == myIdx) {
+			socket.emit('goldKey', memberList[playerId])
+		}
+	}
+	else
+	{
+		if(to == 1)
+		{
+			socket.emit('myPenalty', '한 잔 마셔');
+		}
+		socket.emit('myPenalty', $('.' + to).text());
+	}
+}
+
+function myPenalty(data) {
+	$('#dialogWrap').show();
+	$('#dialogContent').html(data);
+	setTimeout(function(){
+		$('#dialogWrap').hide(300);
+	}, 2000)
+}
+
+function scrollMyMarker(playerId) {
+	var el = document.getElementById('player' + playerId)
+	el.scrollIntoView();
 }
 
 function removeGoldKey(playerId, text, idx) {
-	console.log(playerId)
-	console.log(text)
-	console.log(idx)
-	socket.emit('showMyGoldKey', {
-		playerId: playerId,
-		text: text,
-		eq: idx
-	})
+	var r = confirm("황금열쇠를 사용하시겠습니까?");
+	if (r == true) {
+		socket.emit('showMyGoldKey', {
+			playerId: "Player" + playerId,
+			text: text,
+			memberId: memberList[playerId],
+			eq: idx
+		});
+	}
 }
 
-function drag() {
-	$("p").draggable();
-}
-function sendChat(){
+function sendChat() {
 	var content = $('#chatting').val()
-	if(content != '')
-	{
-		socket.emit('appendChat', content)
+	if (content != '') {
+		socket.emit('appendChat', {
+			myIdx: myIdx,
+			content: content
+		})
 		$('#chatting').val('');
 	}
 }
+
+function showInit(data) {
+	$('#roomListWrap').hide()
+	$('#tableWrap').show()
+	myRoom = data;
+}
+
 function showSetting() {
 	$('#settingWrap').show();
 }
 
+function welcome(data) {
+	$('.logContent').eq(0).append('<p><span class="chat">Player' + data + ' 님이 입장하였습니다.</span></p>')
+}
+
 function createBoard(data) {
 
-	member = data.connection.length;
 	var gameRule = data.data.gameRule;
 
-	//console.log(gameRule);
+	$('#dialogWrap').show();
+	$('#dialogContent').html('게임을 시작합니다.<br />당신은 Player' + data.idx + '입니다.');
+	$('.logContent').eq(0).append('게임을 시작합니다.<br />당신은 Player' + data.idx + '입니다.')
+	setTimeout(function(){
+		$('#dialogWrap').hide(300);
+	}, 2000)
 	for (var i = 0; i < gameRule.length; i++) {
 		$('.game').eq(i).text(gameRule[i]);
+		//console.log(imgMap[gameRule[i]])
+		$('.game').eq(i).css('background-image', 'linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../images/cellBG/'+imgMap[gameRule[i]]+')')
 	}
 	for (var i = 0; i < member; i++) {
 		player.push("" + i);
@@ -325,72 +545,81 @@ function createBoard(data) {
 		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
 	}
 	$('#1').prepend(memberArr);
-	$("p").draggable();
 	$('#settingWrap').hide();
 	$('#diceWrap').show();
 	$('#goldKeyStatus').show();
-//	$('#goldKeyWrap').width(window.innerWidth);
-//	$('#goldKeyWrap').height(window.innerHeight);
-//	$('#dialogWrap').width(window.innerWidth);
-//	$('#dialogWrap').height(window.innerHeight);
-	$('#diceWrap').hide();
-
-	socket.emit('showDice', 0);
+	$('#player0').addClass('blink');
+	$('#rollButton').hide();
+	socket.emit('showDice', {
+		member: memberList[0],
+		memberList: memberList
+	});
 }
 
 function move(data) {
-	//console.log(data.connection);
-	//console.log(data.id+" id");
-	var to = data.data.to;
-	animateMovement(data.data.playerId, data.data.from, data.data.to, data.data.diceNumber);
-	nextTurn = data.data.nextTurn;
-	$('p').removeClass('blink');
-	$('#player' + nextTurn).addClass('blink');
-	$('#diceWrap ul li').eq(1).hide()
-	setTimeout(function () {
-		$('#diceWrap').hide()
-		socket.emit('showDice', nextTurn);
-	}, 2000);
-	if (to == 5 || to == 16 || to == 25 || to == 33) {
-		socket.emit('goldKey', data.data.playerId)
-		//goldKey();
+	//console.log(checkValue(data.data.playerId,removed))
+	if (checkValue(memberList.indexOf(memberList[data.data.playerId]), removed))
+	{
+		var to = data.data.to;
+		animateMovement(data.data.playerId, data.data.from, data.data.to, data.data.diceNumber);
+		nextTurn = data.data.nextTurn;
+
+		$('#rollButton').hide()
+		setTimeout(function () {
+			socket.emit('showDice', {
+				member: memberList[nextTurn],
+				memberList: memberList
+			});
+		}, 2000);
 	}
+//	if (to == 5 || to == 16 || to == 25 || to == 33) {
+//		if (data.data.playerId == myIdx) {
+//			socket.emit('goldKey', memberList[beforeTurn])
+//		}
+//		//goldKey();
+//	}
 }
 
 function showDice() {
-	$('#diceWrap').show();
+	$('#rollButton').show()
 }
 
-function showTurnStatus(data){
-	$('.logContent').eq(1).append('<p>'+data.data+'</p>')
+function blink(index) {
+	$('p').removeClass('blink');
+	$('#player' + index).addClass('blink');
 }
 
-function appendChat(data)
-{
-	console.log(data)
-	$('.logContent').eq(0).append('<p><span class="chat">Player'+data.playerId+' : </span>'+data.data+'</p>')
+function showTurnStatus(data) {
+	setTimeout(function () {
+		$('#turnStatus').html(data.data);
+	}, 2000);
+	$('.logContent').eq(1).append('<p>' + data.data + '</p>')
 }
 
-function showGoldKey(data) {
-	if (data.id == data.connections[data.playerId]) {
-		goldKey(data.playerId);
-	}
+function appendChat(data) {
+	$('.logContent').eq(0).append('<p><span class="chat">Player' + data.playerId + ' : </span>' + data.data + '</p>')
 }
 
-function goldKey(playerId) {
+function openGoldKey(data) {
+	var idx = memberList.indexOf(data)
 	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
 	$('#goldKeyContent').text(goldKeyOption[randomCount]);
 	$('#goldKeyWrap').show(300);
-	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + playerId + ',$(this).text(),$(this).index());" style="padding-left:10px; cursor:pointer;">' + goldKeyOption[randomCount] + '</span>');
+	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + idx + ',$(this).text(),$(this).index());">' + goldKeyOption[randomCount] + '</span>');
+	setTimeout(function(){
+		$('#goldKeyWrap').hide(300)
+		$('.card').removeClass('flipped');
+	}, 2000)
 }
 
 function showMyGoldKey(data) {
-	console.log(data)
 	$('#dialogWrap').show();
-	$('#dialogContent').html('Player' + data.data.playerId + '님이<br />' + data.data.text + '을(를) 사용합니다');
+	$('#dialogContent').html(data.playerId + '님이<br />' + data.text + '을(를) 사용합니다');
+	setTimeout(function(){
+		$('#dialogWrap').hide(300);
+	}, 2000)
 }
 
-function removeMyGoldKey(data) {
-	console.log(data)
-	$('.goldKeyText').eq(data.eq).remove()
+function removeMyGoldKey(eq) {
+	$('.goldKeyText').eq(eq).remove()
 }

@@ -1,3 +1,5 @@
+@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+
 html,
 body,
 div,
@@ -104,10 +106,15 @@ section {
 }
 
 body {
+	width:100%;
+	height:100vh;
 	line-height: 1;
-	font-family: 'BM JUA', '배달의민족 주아', sans-serif;
-	overflow-x:hidden;
-
+	/*	font-family: 'BM JUA', '배달의민족 주아', sans-serif;*/
+	font-family: 'Jeju Gothic', sans-serif;
+	overflow-x: hidden;
+	font-weight: bold;
+	background: url(../images/floor.jpg);
+	background-size:cover;
 }
 
 ol,
@@ -140,7 +147,6 @@ q:after {
 #playerCount {
 	width: 130px;
 	text-align: center;
-	font-family: 'BM JUA', '배달의민족 주아', sans-serif;
 	float: right;
 }
 
@@ -151,6 +157,7 @@ q:after {
 #gameRule {
 	width: 100%;
 	padding: 0;
+	background:none;
 }
 
 #initButton {
@@ -162,12 +169,87 @@ q:after {
 	cursor: pointer;
 }
 
+#roomListWrap {
+	width: 1200px;
+	height: 640px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -320px;
+	margin-left: -600px;
 
+}
+
+#roomListWrap h1 {
+	font-size: 30px;
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+#roomList {
+	width: 100%;
+	height: 600px;
+	overflow-y: scroll;
+	border: 1px solid #ccc;
+	background:#fff;
+}
+
+#roomList li {
+	width: 100%;
+	height: 50px;
+	cursor: pointer;
+}
+
+#roomList li div {
+	border-bottom: 1px solid #ccc;
+	padding-left: 2%;
+	width: 98%;
+	line-height: 2em;
+}
+
+.createRoom {
+	text-align: center;
+	line-height: 3em;
+	width: 100%;
+	background: #434343;
+	color: #fff;
+	cursor: pointer;
+}
+
+#roomNameWrap {
+	display: none;
+}
+
+#createRoomContent {
+	width: 500px;
+	height: 100px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -250px;
+
+}
+
+#createRoomContent input {
+	width: 98%;
+	padding-left: 2%;
+	height: 50px;
+	margin-bottom: 10px;
+	font-size: 24px;
+}
 
 #tableWrap {
-	width: 69%;
-	height: 98vh;
-	position: relative;
+	width: 1200px;
+	height: 650px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -320px;
+	margin-left: -600px;
+	display: none;
+	background: url(../images/paper.jpeg);
+	background-size:cover;
 }
 
 #tableWrap::after {
@@ -185,8 +267,9 @@ q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
-	width: 100%;
-	height: 100%;
+	width: 960px;
+	height: 640px;
+	float: left;
 }
 
 tr {
@@ -206,30 +289,28 @@ td {
 	background-size: 100% 100%;
 	vertical-align: middle;
 	font-size: 14px;
-	width: 8.3% !important;
-	height: 12.5% !important;
+	width: 80px !important;
+	height: 80px !important;
 }
 
 
 #diceWrap {
 	position: absolute;
-	top: 500px;
-	left: 230px;
+	top: 300px;
+	left: 600px;
 	z-index: 3;
 	display: none;
 }
 
 #logWrap {
-	width: 29%;
-	position: absolute;
-	height: 98vh;
-	right: 0;
+	width: 235px;
+	height: 640px;
 	top: 0;
+	float: right;
 }
 
 #logWrap #logMenu {
 	width: 100%;
-
 }
 
 #logWrap #logMenu li {
@@ -245,8 +326,8 @@ td {
 
 .logContent {
 	width: 100%;
-	height: 90%;
-	position: absolute;
+	height: 590px;
+	margin-bottom: 10px;
 	margin-top: 25px;
 	display: none;
 	overflow-y: scroll;
@@ -255,14 +336,14 @@ td {
 
 #chatWrap {
 	width: 100%;
-	position: absolute;
 	bottom: 10px;
 	right: 0;
 }
 
 #chatWrap input {
-	width: 80%;
+	width: 180px;
 	padding-left: 5px;
+	background:none;
 }
 
 .dice {
@@ -330,12 +411,12 @@ p#result span {
 }
 
 .panel {
-	border: 1px solid #434343;
+	border: 1px solid #ccc;
 	position: relative;
 }
 
 .journey {
-	border: 1px solid #434343;
+	border: 1px solid #ccc;
 }
 
 #moveBoard {
@@ -348,8 +429,8 @@ p#result span {
 
 #goldKeyWrap {
 	display: none;
-	width:100%;
-	height:100vh;
+	width: 100%;
+	height: 100vh;
 	position: absolute;
 	top: 0;
 	background-color: rgba(0, 0, 0, 0.9);
@@ -457,12 +538,6 @@ p#result span {
 
 #dialogWrap {
 	display: none;
-	position: absolute;
-	width:100%;
-	height:100vh;
-	top: 0;
-	background-color: rgba(0, 0, 0, 0.9);
-	z-index: 4;
 }
 
 #goldKeyStatus {
@@ -470,15 +545,26 @@ p#result span {
 	width: 500px;
 	top: 0;
 	left: 0;
-	margin-top: 120px;
-	margin-left: 130px;
+	margin-top: 150px;
+	margin-left: 90px;
 	display: none;
-	font-size: 24px;
+	font-size: 20px;
 }
 
 #goldKeyStatus h4 {
-	text-align: center;
+	text-align: left;
 	margin-bottom: 24px;
+	margin-left: 10px;
+}
+
+.goldKeyText {
+	border: 1px solid #fff;
+	margin-left: 10px;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 8px;
+	background-color:#ffd700;
+	float:left;
 }
 
 #dialogContent {
@@ -510,8 +596,25 @@ p#result span {
 	}
 }
 
+#turnStatus {
+	position: absolute;
+	top: 500px;
+	left: 100px;
+	font-size: 24px;
+}
+
 .clearFix {
 	content: "";
 	display: block;
 	clear: both;
+}
+
+.fullSize {
+	/*	display: none;*/
+	position: absolute;
+	width: 100%;
+	height: 100vh;
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.9);
+	z-index: 4;
 }
