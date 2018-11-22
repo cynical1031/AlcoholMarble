@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=0.5">
+	<meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=no" />
 	<title></title>
 	<link href="https://cdn.rawgit.com/YJSoft/Webfonts/0.1/BM_JUA.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="css/style.css" type="text/css">
@@ -16,24 +16,29 @@
 	<script>
 		$(document).ready(function() {
 			getRoomList()
+			var intervalgetRoom = setInterval(function () {
+				getRoomList()
+			}, 3000);
+//			
 			$('#settingWrap').hide();
 			$('.logContent').eq(0).show();
 			$('#roomBtn').click(function(){
 				$('#roomNameWrap').show()
 			});
-			$('#closeRoomName').click(function(){
-				$('#roomName').hide()
+			$('#closeRoomNameWrap').click(function(){
+				$('#roomName').val('');
+				$('#roomNameWrap').hide()
 			})
 			$('.card').click(function() {
 				$(this).toggleClass('flipped');
 			});
-			$('#closeCard').click(function() {
-				$('#goldKeyWrap').hide(300)
-				$('.card').removeClass('flipped');
-			})
-			$('#closeDialog').click(function() {
-				$('#dialogWrap').hide(300);
-			})
+//			$('#goldKeyWrap').click(function() {
+//				$('#goldKeyWrap').hide(300)
+//				$('.card').removeClass('flipped');
+//			})
+//			$('#dialogWrap').click(function() {
+//				$('#dialogWrap').hide(300);
+//			})
 			$('#logMenu li').click(function(){
 				var idx = $(this).index()
 				$('.logContent').hide();
@@ -49,26 +54,35 @@
 			});
 			$('body').keydown(function(key) {
 				if (key.keyCode == 13) {
-					sendChat()
+					if($('#chatting').val() !=""){
+						sendChat();
+					}
+					else if($('#roomName').val() !=""){
+						
+						createRoom();
+						$('#roomName').val('')
+					}
+					else{
+						rollDice()	
+					}
 				}
-
 			});
 		})
 	</script>
 </head>
 
 <body>
-	<div id="roomListWrap">		
+	<div id="roomListWrap">
 		<h1>Room</h1>
 		<div>
 			<ul id="roomList">
-				
+
 			</ul>
 		</div>
 		<div id="roomBtn" class="createRoom">
 			방 만들기
-		</div>		
-	</div>	
+		</div>
+	</div>
 	<div id="tableWrap">
 		<div id="settingWrap">
 			<div id="content">
@@ -85,21 +99,21 @@
 		</div>
 		<table id="gamePanel" style="position:absolute">
 			<tr>
-				<td class="tile panel corner game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top">황금열쇠</td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel corner game"></td>
+				<td class="tile panel corner game 8"></td>
+				<td class="tile panel top game 9"></td>
+				<td class="tile panel top game 10"></td>
+				<td class="tile panel top game 11"></td>
+				<td class="tile panel top game 12"></td>
+				<td class="tile panel top game 13"></td>
+				<td class="tile panel top game 14"></td>
+				<td class="tile panel top game 15"></td>
+				<td class="tile panel top 16">황금열쇠</td>
+				<td class="tile panel top game 17"></td>
+				<td class="tile panel top game 18"></td>
+				<td class="tile panel corner game 19"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 7"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -110,10 +124,10 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 20"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 6"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -124,10 +138,10 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 21"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left">황금열쇠</td>
+				<td class="tile panel left 5">황금열쇠</td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -138,10 +152,10 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 22"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 4"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -152,10 +166,10 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 23"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 3"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -166,10 +180,10 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel game"></td>
+				<td class="tile panel game 24"></td>
 			</tr>
 			<tr>
-				<td class="tile panel left game"></td>
+				<td class="tile panel left game 2"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
@@ -180,23 +194,23 @@
 				<td class="tile"></td>
 				<td class="tile"></td>
 				<td class="tile"></td>
-				<td class="tile panel left">황금열쇠</td>
+				<td class="tile panel left 25">황금열쇠</td>
 			</tr>
 			<tr>
-				<td class="tile panel corner">
+				<td class="tile panel corner 1">
 					<div style="">시작</div>
 				</td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top">황금열쇠</td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel top game"></td>
-				<td class="tile panel corner game"></td>
+				<td class="tile panel top game 36"></td>
+				<td class="tile panel top game 35"></td>
+				<td class="tile panel top game 34"></td>
+				<td class="tile panel top 33">황금열쇠</td>
+				<td class="tile panel top game 32"></td>
+				<td class="tile panel top game 31"></td>
+				<td class="tile panel top game 30"></td>
+				<td class="tile panel top game 29"></td>
+				<td class="tile panel top game 28"></td>
+				<td class="tile panel top game 27"></td>
+				<td class="tile panel corner game 26"></td>
 			</tr>
 		</table>
 		<table id="moveBoard">
@@ -328,7 +342,7 @@
 				<div onclick="sendChat()" style="float:right;height:100%; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
 			</div>
 			<div class="logContent">
-			
+
 			</div>
 			<div id="turnStatus"></div>
 			<div id="goldKeyStatus">
@@ -351,13 +365,11 @@
 		</div>
 	</div>
 	<div id="dialogWrap" class="fullSize">
-		<span id="closeDialog" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 		<p id="dialogContent">
 		</p>
 	</div>
-	<div id="goldKeyWrap"  class="fullSize">
+	<div id="goldKeyWrap" class="fullSize">
 		<div class="container">
-			<span id="closeCard" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
 			<div class="card">
 				<div class="front">
 					<h2><img src="./images/key-icon.png" alt="" style="float:left">황금열쇠</h2>
@@ -368,16 +380,19 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
 	</div>
-	<div id="roomNameWrap"  class="fullSize">
-		<span id="closeRoomName" style="color:#fff;position:absolute;font-size:60px; top:20px;right:20px; cursor: pointer;">x</span>
+	<div id="roomNameWrap" class="fullSize">
 		<div id="createRoomContent">
-			<input id="roomName" type="text" placeholder="방 이름을 입력해주세요."/>
+			<input id="roomName" type="text" placeholder="방 이름을 입력해주세요." />
 			<div class="createRoom" onclick="createRoom();">
 				방 생성
-			</div>	
-		</div>	
+			</div>
+			<div id="closeRoomNameWrap" class="createRoom" style="background:none; margin-top:80px;">
+				닫기
+			</div>
+		</div>
 	</div>
 </body>
 
