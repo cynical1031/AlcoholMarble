@@ -54,17 +54,7 @@
 			});
 			$('body').keydown(function(key) {
 				if (key.keyCode == 13) {
-					if($('#chatting').val() !=""){
-						sendChat();
-					}
-					else if($('#roomName').val() !=""){
-						
-						createRoom();
-						$('#roomName').val('')
-					}
-					else{
-						rollDice()	
-					}
+					sendChat();
 				}
 			});
 		})
