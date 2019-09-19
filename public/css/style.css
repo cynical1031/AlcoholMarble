@@ -1,4 +1,4 @@
-@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+@font-face { font-family: 'soya'; src: url(./soya.ttf) format('truetype'); }
 
 html,
 body,
@@ -104,16 +104,18 @@ nav,
 section {
 	display: block;
 }
-
+html, body, pre, code, kbd, samp {
+	font-family: soya;
+}
 body {
 	width:100%;
 	height:100vh;
 	line-height: 1;
 	/*	font-family: 'BM JUA', '배달의민족 주아', sans-serif;*/
-	font-family: 'Jeju Gothic', sans-serif;
+	font-family: soya;
 	overflow-x: hidden;
 	font-weight: bold;
-	background: url(../images/floor.jpg);
+	background: url(../images/8bit.gif);
 	background-size:cover;
 }
 
@@ -134,13 +136,13 @@ q:after {
 	content: '';
 	content: none;
 }
-
+input, textarea, select { font-family:inherit; }
 #settingWrap {
 	position: absolute;
 	z-index: 1;
 	background-size: cover;
 	width: 330px;
-	margin-top: 200px;
+	margin-top: 100px;
 	margin-left: 145px;
 }
 
@@ -164,31 +166,27 @@ q:after {
 	margin-top: 8px;
 	width: 100%;
 	line-height: 2em;
-	background: #ccc;
 	text-align: center;
 	cursor: pointer;
 }
 
 #roomListWrap {
-	width: 1200px;
-	height: 640px;
+	width: 1210px;
 	position: absolute;
-	top: 50%;
+	top:50%;
 	left: 50%;
-	margin-top: -320px;
+	margin-top:-361px;
 	margin-left: -600px;
 
 }
 
-#roomListWrap h1 {
-	font-size: 30px;
-	margin-bottom: 10px;
-	text-align: center;
+#roomBtn {
+	width:1201px;
 }
 
 #roomList {
 	width: 100%;
-	height: 600px;
+	height: 550px;
 	overflow-y: scroll;
 	border: 1px solid #ccc;
 	background:#fff;
@@ -197,6 +195,7 @@ q:after {
 #roomList li {
 	width: 100%;
 	height: 50px;
+	color:#000;
 	cursor: pointer;
 }
 
@@ -214,6 +213,7 @@ q:after {
 	background: #434343;
 	color: #fff;
 	cursor: pointer;
+	z-index:2;
 }
 
 #roomNameWrap {
@@ -240,16 +240,15 @@ q:after {
 }
 
 #tableWrap {
-	width: 1200px;
-	height: 650px;
+	width: 1300px;
 	position: absolute;
-	top: 50%;
+	top:50%;
 	left: 50%;
-	margin-top: -320px;
-	margin-left: -600px;
+	margin-top:-340px;
+	margin-left: -650px;
 	display: none;
-	background: url(../images/paper.jpeg);
 	background-size:cover;
+	background-color:#fff;
 }
 
 #tableWrap::after {
@@ -311,6 +310,7 @@ td {
 
 #logWrap #logMenu {
 	width: 100%;
+	margin-top:-12px;
 }
 
 #logWrap #logMenu li {
@@ -326,17 +326,18 @@ td {
 
 .logContent {
 	width: 100%;
-	height: 590px;
-	margin-bottom: 10px;
+	height: 540px;
+	margin-bottom: 3px;
 	margin-top: 25px;
 	display: none;
 	overflow-y: scroll;
-	border: 1px solid #ccc;
+	border: 4px solid #000;
 }
 
 #chatWrap {
 	width: 100%;
 	bottom: 10px;
+	margin-top:10px;
 	right: 0;
 }
 
@@ -411,10 +412,16 @@ p#result span {
 }
 
 .panel {
-	border: 1px solid #ccc;
+	border: 4px solid #000;
 	position: relative;
+	font-weight:bold;
+	
 }
-
+.corner{border-radius: 3px;}
+.tile{
+	width:80px !important;
+	height:80px !important;
+}
 .journey {
 	border: 1px solid #ccc;
 }
@@ -546,7 +553,7 @@ p#result span {
 	top: 0;
 	left: 0;
 	margin-top: 150px;
-	margin-left: 90px;
+	margin-left: 120px;
 	display: none;
 	font-size: 20px;
 }
@@ -599,7 +606,7 @@ p#result span {
 #turnStatus {
 	position: absolute;
 	top: 500px;
-	left: 100px;
+	left: 128px;
 	font-size: 24px;
 }
 
@@ -618,3 +625,86 @@ p#result span {
 	background-color: rgba(0, 0, 0, 0.9);
 	z-index: 4;
 }
+
+.eightbit-btn {
+	background: #92CD41;
+	display: inline-block;
+	position: relative;
+	text-align: center;
+	font-size: 24px;
+	text-decoration: none;
+	color: white;
+	box-shadow: inset -4px -4px 0px 0px #4AA52E;
+  }
+  .eightbit-btn:hover, .eightbit-btn:focus {
+	background: #76c442;
+	box-shadow: inset -6px -6px 0px 0px #4AA52E;
+  }
+  .eightbit-btn:active {
+	box-shadow: inset 4px 4px 0px 0px #4AA52E;
+  }
+  .eightbit-btn:before, .eightbit-btn:after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	box-sizing: content-box;
+  }
+  .eightbit-btn:before {
+	top: -6px;
+	left: 0;
+	border-top: 6px black solid;
+	border-bottom: 6px black solid;
+  }
+  .eightbit-btn:after {
+	left: -6px;
+	top: 0;
+	border-left: 6px black solid;
+	border-right: 6px black solid;
+  }
+  .eightbit-btn--reset {
+	background: #E76E55;
+	box-shadow: inset -4px -4px 0px 0px #8C2022;
+  }
+  .eightbit-btn--reset:hover, .eightbit-btn--reset:focus {
+	background: #CE372B;
+	box-shadow: inset -6px -6px 0px 0px #8C2022;
+  }
+  .eightbit-btn--reset:active {
+	box-shadow: inset 4px 4px 0px 0px #8C2022;
+  }
+  .eightbit-btn--proceed {
+	background: #F7D51D;
+	box-shadow: inset -4px -4px 0px 0px #E59400;
+  }
+  .eightbit-btn--proceed:hover, .eightbit-btn--proceed:focus {
+	background: #F2C409;
+	box-shadow: inset -6px -6px 0px 0px #E59400;
+  }
+  .eightbit-btn--proceed:active {
+	box-shadow: inset 4px 4px 0px 0px #E59400;
+  }
+  
+  *, *:before, *:after {
+	box-sizing: border-box;
+  }
+
+  /* width */
+::-webkit-scrollbar {
+	width: 3px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+	background: #555;
+  }

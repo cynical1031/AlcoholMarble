@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.0.16:8080');
+var socket = io.connect('http://localhost:8080');
 
 socket.on('existRoom', function () {
 	alert('이미 방이 존재합니다.')

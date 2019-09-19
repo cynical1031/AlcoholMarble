@@ -94,9 +94,7 @@ var removed = []
 
 function createRoom() {
 	var roomName = $('#roomName').val();
-	$('#roomNameWrap').hide();
 	socket.emit('createRoom', roomName)
-
 }
 
 function getRoomList() {
@@ -542,7 +540,8 @@ function createBoard(data) {
 		player.push("" + i);
 	}
 	for (var i = 0; i < player.length; i++) {
-		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+		memberArr.push("<p id=player" + i + " style='position:relative; z-index:3'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+		//float:left; ;
 	}
 	$('#1').prepend(memberArr);
 	$('#settingWrap').hide();

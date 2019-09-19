@@ -7,6 +7,12 @@
 	<title></title>
 	<link href="https://cdn.rawgit.com/YJSoft/Webfonts/0.1/BM_JUA.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<!-- minify -->
+	<link href="https://unpkg.com/nes.css@2.2.0/css/nes.min.css" rel="stylesheet" />
+	<!-- latest -->
+	<link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+	<!-- core style only -->
+	<link href="https://unpkg.com/nes.css/css/nes-core.min.css" rel="stylesheet" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="js/jquery.ui.touch-punch.min.js"> </script>
@@ -23,7 +29,7 @@
 			$('#settingWrap').hide();
 			$('.logContent').eq(0).show();
 			$('#roomBtn').click(function(){
-				$('#roomNameWrap').show()
+				document.getElementById('dialog-dark-rounded').showModal();
 			});
 			$('#closeRoomNameWrap').click(function(){
 				$('#roomName').val('');
@@ -57,39 +63,47 @@
 					sendChat();
 				}
 			});
+			//$('.panel').addClass('nes-container is-rounded')
 		})
 	</script>
+	<style>
+		html, body, pre, code, kbd, samp {
+			font-family: soya;
+		}
+	</style>
 </head>
 
 <body>
 	<div id="roomListWrap">
-		<h1>Room</h1>
-		<div>
-			<ul id="roomList">
+		<div class="nes-container is-dark with-title">
+			<p class="title" style="font-size:30px;">Room</p>
+			<div class="nes-list">
+			<ul id="roomList" class="nes-list is-disc">
 
 			</ul>
+			</div>
 		</div>
-		<div id="roomBtn" class="createRoom">
+		<div id="roomBtn" class="createRoom nes-btn is-success">
 			방 만들기
 		</div>
 	</div>
-	<div id="tableWrap">
+	<div id="tableWrap" class="nes-container is-rounded">
 		<div id="settingWrap">
 			<div id="content">
 				<ul id="settingList">
 					<li>
 						<h4 id="gameRuleTitle">룰 설정</h4>
-						<textarea name="gameRule" id="gameRule" cols="30" rows="10" placeholder="주의사항 &#10;&#10;1. 게임을 /로 구분지어 주세요.&#10;2. 일정 수 미만일 경우 게임이&#10;   랜덤으로 추가됩니다.&#10;3. 게임은 최대 31개까지 지정할 수&#10;   있습니다."></textarea>
+						<textarea name="gameRule" id="gameRule" class="nes-textarea" cols="30" rows="10" placeholder="주의사항 &#10;&#10;1. 게임을 /로 구분지어 주세요.&#10;2. 일정 수 미만일 경우 게임이&#10;   랜덤으로 추가됩니다.&#10;3. 게임은 최대 31개까지 지정할 수&#10;   있습니다."></textarea>
 					</li>
 					<li>
-						<div id="initButton" onclick="init()">생성</div>
+						<div id="initButton" class="nes-btn is-success" onclick="init()">생성</div>
 					</li>
 				</ul>
 			</div>
 		</div>
-		<table id="gamePanel" style="position:absolute">
+		<table id="gamePanel" style="position:absolute" class="">
 			<tr>
-				<td class="tile panel corner game 8"></td>
+				<td class="tile panel corner game 8"><div></div></td>
 				<td class="tile panel top game 9"></td>
 				<td class="tile panel top game 10"></td>
 				<td class="tile panel top game 11"></td>
@@ -97,7 +111,7 @@
 				<td class="tile panel top game 13"></td>
 				<td class="tile panel top game 14"></td>
 				<td class="tile panel top game 15"></td>
-				<td class="tile panel top 16">황금열쇠</td>
+				<td class="tile panel top 16 ">황금열쇠</td>
 				<td class="tile panel top game 17"></td>
 				<td class="tile panel top game 18"></td>
 				<td class="tile panel corner game 19"></td>
@@ -320,16 +334,16 @@
 		<div id="logWrap">
 			<div class="clearFix">
 				<ul id="logMenu">
-					<li>chat</li>
-					<li>log</li>
+					<li class="nes-btn" style="padding:5px;">chat</li>
+					<li class="nes-btn"  style="padding:5px;">log</li>
 				</ul>
 			</div>
-			<div class="logContent">
+			<div class="logContent nes-container is-rounded">
 			</div>
 
 			<div id="chatWrap">
-				<input id="chatting" type="text">
-				<div onclick="sendChat()" style="float:right;height:100%; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
+				<input id="chatting" class="nes-input" style="width:150px; height:40px !important;" type="text">
+				<div onclick="sendChat()" class="nes-btn is-success" style="float:right;padding:5px; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
 			</div>
 			<div class="logContent">
 
@@ -348,7 +362,7 @@
 						<div id="dice2" class="dice dice_2" style="float:left;"></div>
 					</li>
 					<li style="">
-						<div id="rollButton" onclick="rollDice()" style="clear:left; margin-top:0px;text-align: center;padding:10px;margin-left:5px; background: #ccc; cursor:pointer;">굴리기</div>
+						<div id="rollButton" class="nes-btn is-success" style="width:100%; margin-top:10px;" onclick="rollDice()">굴리기</div>
 					</li>
 				</ul>
 			</div>
@@ -370,20 +384,17 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
-	<div id="roomNameWrap" class="fullSize">
-		<div id="createRoomContent">
-			<input id="roomName" type="text" placeholder="방 이름을 입력해주세요." />
-			<div class="createRoom" onclick="createRoom();">
-				방 생성
-			</div>
-			<div id="closeRoomNameWrap" class="createRoom" style="background:none; margin-top:80px;">
-				닫기
-			</div>
-		</div>
-	</div>
+	<dialog class="nes-dialog is-dark is-rounded" id="dialog-dark-rounded">
+		<form method="dialog">
+		<input id="roomName" class="nes-input is-success" style="width:100%;" type="text" placeholder="방 이름을 입력해주세요." autocomplete="off"/>
+		<menu class="dialog-menu" style="margin-top:20px;">
+			<button class="nes-btn">취소</button>
+			<button class="nes-btn is-primary" onclick="createRoom();">생성</button>
+		</menu>
+		</form>
+	</dialog>
 </body>
 
 </html>
