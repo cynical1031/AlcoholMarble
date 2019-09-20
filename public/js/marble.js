@@ -201,6 +201,7 @@ function shuffle(arr) {
 
 function rollDice() {
 	$('#rollButton').hide()
+	
 	console.log('here?')
 	var status = "";
 	var d1 = Math.floor(Math.random() * 4 + 1); //random num 1-6
@@ -534,7 +535,7 @@ function createBoard(data) {
 	for (var i = 0; i < gameRule.length; i++) {
 		$('.game').eq(i).text(gameRule[i]);
 		//console.log(imgMap[gameRule[i]])
-		$('.game').eq(i).css('background-image', 'linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../images/cellBG/'+imgMap[gameRule[i]]+')')
+		//$('.game').eq(i).css('background-image', 'linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../images/cellBG/'+imgMap[gameRule[i]]+')')
 	}
 	for (var i = 0; i < member; i++) {
 		player.push("" + i);
@@ -602,6 +603,8 @@ function appendChat(data) {
 function openGoldKey(data) {
 	var idx = memberList.indexOf(data)
 	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
+	var goldKeySound = new Audio("./bgm/goldKey.wav");
+	goldKeySound.play()
 	$('#goldKeyContent').text(goldKeyOption[randomCount]);
 	$('#goldKeyWrap').show(300);
 	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + idx + ',$(this).text(),$(this).index());">' + goldKeyOption[randomCount] + '</span>');

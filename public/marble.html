@@ -63,7 +63,8 @@
 					sendChat();
 				}
 			});
-			//$('.panel').addClass('nes-container is-rounded')
+			var rollSound = new Audio("./bgm/click.wav");
+			$('#rollButton').click(e => rollSound.play());
 		})
 	</script>
 	<style>
@@ -334,8 +335,8 @@
 		<div id="logWrap">
 			<div class="clearFix">
 				<ul id="logMenu">
-					<li class="nes-btn" style="padding:5px;">chat</li>
-					<li class="nes-btn"  style="padding:5px;">log</li>
+					<li class="nes-btn is-dark" style="">chat</li>
+					<li class="nes-btn is-dark"  style="">log</li>
 				</ul>
 			</div>
 			<div class="logContent nes-container is-rounded">
@@ -362,7 +363,10 @@
 						<div id="dice2" class="dice dice_2" style="float:left;"></div>
 					</li>
 					<li style="">
-						<div id="rollButton" class="nes-btn is-success" style="width:100%; margin-top:10px;" onclick="rollDice()">굴리기</div>
+						<div id="rollButton" class="nes-btn is-success" style="width: 163px;
+						margin-left: 8px;
+						margin-top: 10px;
+						display: inline-block;" onclick="rollDice()">굴리기</div>
 					</li>
 				</ul>
 			</div>
@@ -395,6 +399,10 @@
 		</menu>
 		</form>
 	</dialog>
+	<audio id="myAudio" controls loop autoplay > 
+		<source src="./bgm/8bit-act01_title_loop.ogg" type="audio/ogg">
+		<!-- <source src="./bgm/8bit-act01_title_loop.m4a" type="audio/x-m4a"> -->
+	</audio>
+	  
 </body>
-
 </html>
