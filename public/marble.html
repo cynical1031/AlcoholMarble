@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=no" />
 	<title></title>
-	<link href="https://cdn.rawgit.com/YJSoft/Webfonts/0.1/BM_JUA.css" rel="stylesheet" type="text/css" />
+
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 	<!-- minify -->
 	<link href="https://unpkg.com/nes.css@2.2.0/css/nes.min.css" rel="stylesheet" />
@@ -34,6 +34,7 @@
 			$('#closeRoomNameWrap').click(function(){
 				$('#roomName').val('');
 				$('#roomNameWrap').hide()
+				clearInterval(intervalgetRoom)
 			})
 			$('.card').click(function() {
 				$(this).toggleClass('flipped');
@@ -335,8 +336,8 @@
 		<div id="logWrap">
 			<div class="clearFix">
 				<ul id="logMenu">
-					<li class="nes-btn is-dark" style="">chat</li>
-					<li class="nes-btn is-dark"  style="">log</li>
+					<li  style=""><button class="nes-btn is-dark">chat</button></li>
+					<li  style=""><button class="nes-btn is-dark">Log</button></li>
 				</ul>
 			</div>
 			<div class="logContent nes-container is-rounded">
@@ -344,9 +345,10 @@
 
 			<div id="chatWrap">
 				<input id="chatting" class="nes-input" style="width:150px; height:40px !important;" type="text">
-				<div onclick="sendChat()" class="nes-btn is-success" style="float:right;padding:5px; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div>
+				<button class="nes-btn is-success" onclick="sendChat()" style="width:60px; height: 40px; margin-left: 6px;">전송</button>
+				<!-- <div  class="nes-btn is-success" style="float:right;padding:5px; margin-right: 8px; margin-top: 4px; cursor:pointer;">전송</div> -->
 			</div>
-			<div class="logContent">
+			<div class="logContent nes-container is-rounded">
 
 			</div>
 			<div id="turnStatus"></div>
@@ -399,7 +401,7 @@
 		</menu>
 		</form>
 	</dialog>
-	<audio id="myAudio" controls loop autoplay > 
+	<audio id="myAudio" controls loop autoplay style="display: none;"> 
 		<source src="./bgm/8bit-act01_title_loop.ogg" type="audio/ogg">
 		<!-- <source src="./bgm/8bit-act01_title_loop.m4a" type="audio/x-m4a"> -->
 	</audio>

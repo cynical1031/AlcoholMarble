@@ -92,8 +92,16 @@ var doubleFlag = true;
 var connectFlag = false;
 var removed = []
 
+function playMusic(){
+	document.getElementById('myAudio').play();
+	document.getElementById('myAudio').volume= 0.6
+	$('#myAudio').show()
+	//console.log('play')
+}
+
 function createRoom() {
 	var roomName = $('#roomName').val();
+	clearInterval(intervalgetRoom)
 	socket.emit('createRoom', roomName)
 }
 
@@ -169,7 +177,7 @@ function checkValue(value, arr) {
 }
 
 function init() {
-
+	
 	if ($('#gameRule').val() == "") {
 		gameRule = [];
 	} else {
@@ -523,7 +531,7 @@ function welcome(data) {
 }
 
 function createBoard(data) {
-
+	playMusic()
 	var gameRule = data.data.gameRule;
 
 	$('#dialogWrap').show();

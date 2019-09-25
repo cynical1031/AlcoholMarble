@@ -3,6 +3,7 @@ var http = require('http');
 var path = require('path');
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+
 var httpServer = http.createServer(app).listen(8080, function (req, res) {
 	console.log('Socket IO server has been started');
 });
@@ -18,9 +19,10 @@ app.get('/', (req, res) => {
 });
 
 io.sockets.on('connection', function (socket) {
-
-	socket.leave(socket.id)
+	
+	//socket.leave(socket.id)
 	connections.push(socket.id)
+	//io.sockets.emit('playMusic');
 	socket.on('createRoom', function (data) {
 		//createRoom(data);
 		if (availables.indexOf(data) == -1) {
