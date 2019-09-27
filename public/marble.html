@@ -66,7 +66,16 @@
 			});
 			var rollSound = new Audio("./bgm/click.wav");
 			$('#rollButton').click(e => rollSound.play());
-		})
+			$('body').keyup(function(e){
+
+				if(e.keyCode == 32){
+					if(!$('#rollButton').is(':hidden') && !$('#chatting').is(':focus'))
+					{
+						$('#rollButton').click()
+					}
+				}
+			});
+			})
 	</script>
 	<style>
 		html, body, pre, code, kbd, samp {
@@ -352,9 +361,9 @@
 
 			</div>
 			<div id="turnStatus"></div>
-			<div id="goldKeyStatus">
-				<h4>내 황금열쇠</h4>
-				<div id="statusList">
+			<div id="goldKeyStatus" class="nes-container is-rounded with-title">
+				<p class="title" style="font-size: 22px">내 황금열쇠</p>
+				<div id="statusList" style="height:250px; overflow-y: scroll">
 
 				</div>
 			</div>
