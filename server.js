@@ -25,6 +25,7 @@ io.sockets.on('connection', function (socket) {
 	connections.push(socket.id)
 	socket.on('createRoom', function (data) {
 		//createRoom(data);
+		console.log(data)
 		if (availables.indexOf(data) == -1) {
 			availables.push(data);
 			socket.leave()
