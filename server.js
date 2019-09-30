@@ -14,7 +14,7 @@ var availables = []
 var roomList = {};
 var removed = []
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'marble.html'));
+	res.sendFile(path.join(__dirname, 'public', 'lobby.html'));
 });
 app.get('/room/:roomNumber', (req, res) => {
 	console.log(req.params.roomNumber)
