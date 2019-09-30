@@ -1,4 +1,8 @@
-var socket = io.connect('http://192.168.0.16:8080');
+var socket = io.connect(window.location.host);
+
+socket.on('playMusic', function(){
+	playMusic();
+})
 
 socket.on('existRoom', function () {
 	alert('이미 방이 존재합니다.')

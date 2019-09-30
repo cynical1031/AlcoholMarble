@@ -50,53 +50,23 @@ var goldKeyOption = [
 			"주류 제조권",
 			"물 한잔"
 		];
-var imgMap = {
-	"걸린 사람 원샷" : "1.jpg",
-	"양 옆 마시기" : "2.jpg",
-	"다같이 원샷" : "3.jpg",
-	"나빼고 원샷" : "4.png",
-	"007 빵" : "5.jpg",
-	"눈치게임" : "6.png",
-	"릴렉스 타임(10분)" : "7.png",
-	"너 마셔" : "8.jpg",
-	"흑기사" : "9.png",
-	"랜덤게임" : "10.png",
-	"3.6.9" : "11.png",
-	"배스킨라빈스 31" : "12.jpg",
-	"경마게임" : "13.png",
-	"xx에 가면" : "14.png",
-	"혼자왔습니다." : "15.jpg",
-	"바보게임" : "16.png",
-	"훈민정음" : "17.png",
-	"더 게임 오브 데스" : "18.png",
-	"공산당 게임" : "19.jpg",
-	"바니바니" : "20.png",
-	"손병호 게임" : "21.jpg",
-	"구구단을 외자" : "22.png",
-	"후라이팬 놀이" : "23.png",
-	"딸기 게임" : "24.png",
-	"할머니 게임" : "25.jpg",
-	"아파트 게임" : "26.png",
-	"다같이 물 한잔" : "27.png",
-	"파도 타기" : "28.png",
-	"세 잔 적립" : "29.png",
-	"뚜껑 꺾기" : "30.png",
-	"Happy New Year!" : "31.png",
-	"업 다운" : "",
-	"다같이 음료수" : ""
-	
-}
 var player = [];
 var memberArr = []
 var doubleFlag = true;
 var connectFlag = false;
 var removed = []
 
+function playMusic(){
+	document.getElementById('myAudio').play();
+	document.getElementById('myAudio').volume= 0.6
+	$('#myAudio').show()
+	//console.log('play')
+}
+
 function createRoom() {
 	var roomName = $('#roomName').val();
-	$('#roomNameWrap').hide();
+	clearInterval(intervalgetRoom)
 	socket.emit('createRoom', roomName)
-
 }
 
 function getRoomList() {
@@ -171,7 +141,7 @@ function checkValue(value, arr) {
 }
 
 function init() {
-
+	
 	if ($('#gameRule').val() == "") {
 		gameRule = [];
 	} else {
@@ -203,7 +173,8 @@ function shuffle(arr) {
 
 function rollDice() {
 	$('#rollButton').hide()
-	console.log('here?')
+	
+	//console.log('here?')
 	var status = "";
 	var d1 = Math.floor(Math.random() * 4 + 1); //random num 1-6
 	var d2 = Math.floor(Math.random() * 4 + 1);
@@ -324,7 +295,7 @@ function rolling(d1, d2) {
 }
 
 function animateMovement(playerId, from, to, diceNumber) {
-	console.log(playerId)
+	//console.log(playerId)
 
 	var elem = document.getElementById("player" + playerId);
 	if (to > 36) {
@@ -524,7 +495,7 @@ function welcome(data) {
 }
 
 function createBoard(data) {
-
+	playMusic()
 	var gameRule = data.data.gameRule;
 
 	$('#dialogWrap').show();
@@ -536,13 +507,14 @@ function createBoard(data) {
 	for (var i = 0; i < gameRule.length; i++) {
 		$('.game').eq(i).text(gameRule[i]);
 		//console.log(imgMap[gameRule[i]])
-		$('.game').eq(i).css('background-image', 'linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../images/cellBG/'+imgMap[gameRule[i]]+')')
+		//$('.game').eq(i).css('background-image', 'linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../images/cellBG/'+imgMap[gameRule[i]]+')')
 	}
 	for (var i = 0; i < member; i++) {
 		player.push("" + i);
 	}
 	for (var i = 0; i < player.length; i++) {
-		memberArr.push("<p id=player" + i + " style='float:left; position:relative; z-index:3;'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+		memberArr.push("<p id=player" + i + " style='position:relative; z-index:3'><img class='marker' style='width:40px;' src='./images/player1.png' /></p>")
+		//float:left; ;
 	}
 	$('#1').prepend(memberArr);
 	$('#settingWrap').hide();
@@ -603,9 +575,11 @@ function appendChat(data) {
 function openGoldKey(data) {
 	var idx = memberList.indexOf(data)
 	var randomCount = Math.floor(Math.random() * goldKeyOption.length);
+	var goldKeySound = new Audio("./bgm/goldKey.wav");
+	goldKeySound.play()
 	$('#goldKeyContent').text(goldKeyOption[randomCount]);
 	$('#goldKeyWrap').show(300);
-	$('#statusList').append('<span class="goldKeyText" onclick="removeGoldKey(' + idx + ',$(this).text(),$(this).index());">' + goldKeyOption[randomCount] + '</span>');
+	$('#statusList').append('<button class="nes-btn is-warning goldKeyText" style="margin:10px;" onclick="removeGoldKey(' + idx + ',$(this).text(),$(this).index());">' + goldKeyOption[randomCount] + '</button>');
 	setTimeout(function(){
 		$('#goldKeyWrap').hide(300)
 		$('.card').removeClass('flipped');
