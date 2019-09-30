@@ -16,7 +16,9 @@ var removed = []
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'marble.html'));
 });
-
+app.get('/room/:roomNumber', (req, res) => {
+	console.log(req.params.roomNumber)
+});
 io.sockets.on('connection', function (socket) {
 
 	socket.leave(socket.id)
