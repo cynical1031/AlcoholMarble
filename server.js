@@ -24,13 +24,21 @@ io.sockets.on('connection', function (socket) {
 	socket.leave(socket.id)
 	connections.push(socket.id)
 	socket.on('createRoom', function (data) {
-		//createRoom(data);
+		console.log(data)
+		var room = new Object();
+		var uuid = require('uuid/v1');
+		var roomUUID = uuid()
+		room.name = data
+		room.uuid = roomUUID
+		console.log(room)
+		//location.href = './room/'+
 		if (availables.indexOf(data) == -1) {
 			availables.push(data);
 			socket.leave()
 			socket.join(data)
 			socket.room = data;
 			roomList[data] = true;
+			console.log(roomList)
 			socket.emit('showInit', data);
 			socket.emit('showSetting');
 			var memberList = []
