@@ -3,7 +3,6 @@ var http = require('http');
 var path = require('path');
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
-
 var httpServer = http.createServer(app).listen(8080, function (req, res) {
 	console.log('Socket IO server has been started');
 });
@@ -15,22 +14,31 @@ var availables = []
 var roomList = {};
 var removed = []
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'marble.html'));
+	res.sendFile(path.join(__dirname, 'public', 'lobby.html'));
 });
-
+app.get('/room/:roomNumber', (req, res) => {
+	console.log(req.params.roomNumber)
+});
 io.sockets.on('connection', function (socket) {
-	
-	//socket.leave(socket.id)
+
+	socket.leave(socket.id)
 	connections.push(socket.id)
-	//io.sockets.emit('playMusic');
 	socket.on('createRoom', function (data) {
-		//createRoom(data);
+		console.log(data)
+		var room = new Object();
+		var uuid = require('uuid/v1');
+		var roomUUID = uuid()
+		room.name = data
+		room.uuid = roomUUID
+		console.log(room)
+		//location.href = './room/'+
 		if (availables.indexOf(data) == -1) {
 			availables.push(data);
 			socket.leave()
 			socket.join(data)
 			socket.room = data;
 			roomList[data] = true;
+			console.log(roomList)
 			socket.emit('showInit', data);
 			socket.emit('showSetting');
 			var memberList = []
